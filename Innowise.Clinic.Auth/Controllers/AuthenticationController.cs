@@ -9,17 +9,15 @@ namespace Innowise.Clinic.Auth.Controllers;
 [Route("auth")]
 public class AuthenticationController : ControllerBase
 {
-    private readonly ILogger<AuthenticationController> _logger;
     private readonly UserManager<IdentityUser<Guid>> _userManager;
     private readonly SignInManager<IdentityUser<Guid>> _signInManager;
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly ITokenGenerator _tokenGenerator;
 
-    public AuthenticationController(ILogger<AuthenticationController> logger, UserManager<IdentityUser<Guid>> userManager,
+    public AuthenticationController(UserManager<IdentityUser<Guid>> userManager,
         RoleManager<IdentityRole<Guid>> roleManager, ITokenGenerator tokenGenerator,
         SignInManager<IdentityUser<Guid>> signInManager)
     {
-        _logger = logger;
         _userManager = userManager;
         _roleManager = roleManager;
         _tokenGenerator = tokenGenerator;

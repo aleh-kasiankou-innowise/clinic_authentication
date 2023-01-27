@@ -14,9 +14,16 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ClinicAuthDbContext>(
     opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("default")));
 
-builder.Services.AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>()
+builder.Services.AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>(options =>
+    {
+        options.Password.RequireDigit = false;
+        options.Password.RequiredLength = 6;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+    })
     .AddEntityFrameworkStores<ClinicAuthDbContext>()
-    .AddDefaultTokenProviders();
+    .AddDefaultTokenProviders().AddPasswordValidator<MaximalPasswordLengthValidator<IdentityUser<Guid>>>();
 
 
 
@@ -56,6 +63,8 @@ using (var scope = app.Services.CreateScope())
 }
 
 /*app.UseHttpsRedirection();*/
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
