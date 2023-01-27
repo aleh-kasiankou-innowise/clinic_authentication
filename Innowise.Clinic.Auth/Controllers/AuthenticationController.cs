@@ -1,5 +1,6 @@
-using System.IdentityModel.Tokens.Jwt;
-using Innowise.Clinic.Auth.Jwt;
+using System.Security.Claims;
+using Innowise.Clinic.Auth.Constants;
+using Innowise.Clinic.Auth.Jwt.Interfaces;
 using Innowise.Clinic.Auth.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,14 +12,11 @@ namespace Innowise.Clinic.Auth.Controllers;
 public class AuthenticationController : ControllerBase
 {
     private readonly UserManager<IdentityUser<Guid>> _userManager;
-    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly ITokenGenerator _tokenGenerator;
 
-    public AuthenticationController(UserManager<IdentityUser<Guid>> userManager,
-        RoleManager<IdentityRole<Guid>> roleManager, ITokenGenerator tokenGenerator)
+    public AuthenticationController(UserManager<IdentityUser<Guid>> userManager, ITokenGenerator tokenGenerator)
     {
         _userManager = userManager;
-        _roleManager = roleManager;
         _tokenGenerator = tokenGenerator;
     }
 
@@ -40,16 +38,22 @@ public class AuthenticationController : ControllerBase
         if (!signUpResult.Succeeded)
             return BadRequest();
 
-        var signInResult = await _userManager.CheckPasswordAsync(user, patientCredentials.Password);
+        await _userManager.AddToRoleAsync(user, UserRoles.Patient.ToString());
 
-        if (!signInResult)
+        var userRoles = await _userManager.GetRolesAsync(user);
+
+        var authClaims = new List<Claim>
         {
-            return Unauthorized();
+            new Claim(ClaimTypes.PrimarySid, user.Id.ToString()),
+        };
+
+        foreach (var userRole in userRoles)
+        {
+            authClaims.Add(new Claim(ClaimTypes.Role, userRole));
         }
 
-        var token = _tokenGenerator.GenerateToken(User.Claims);
-        var tokenJson = new JwtSecurityTokenHandler().WriteToken(token);
+        var token = _tokenGenerator.GenerateToken(authClaims);
 
-        return Ok(tokenJson);
+        return Ok(token);
     }
 }

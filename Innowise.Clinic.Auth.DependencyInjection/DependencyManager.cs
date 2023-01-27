@@ -26,7 +26,7 @@ public static class DependencyManager
                 options.Password.RequireUppercase = false;
             })
             .AddEntityFrameworkStores<ClinicAuthDbContext>()
-            .AddDefaultTokenProviders()
+            /*.AddDefaultTokenProviders()*/
             .AddPasswordValidator<MaximalPasswordLengthValidator<IdentityUser<Guid>>>();
 
         return services;
