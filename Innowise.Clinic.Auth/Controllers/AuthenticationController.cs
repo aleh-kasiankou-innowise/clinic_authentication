@@ -10,42 +10,41 @@ namespace Innowise.Clinic.Auth.Controllers;
 public class AuthenticationController : ControllerBase
 {
     private readonly UserManager<IdentityUser<Guid>> _userManager;
-    private readonly SignInManager<IdentityUser<Guid>> _signInManager;
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly ITokenGenerator _tokenGenerator;
 
     public AuthenticationController(UserManager<IdentityUser<Guid>> userManager,
-        RoleManager<IdentityRole<Guid>> roleManager, ITokenGenerator tokenGenerator,
-        SignInManager<IdentityUser<Guid>> signInManager)
+        RoleManager<IdentityRole<Guid>> roleManager, ITokenGenerator tokenGenerator)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _tokenGenerator = tokenGenerator;
-        _signInManager = signInManager;
     }
 
 
     [HttpPost("sign-up/patient")]
-    public async Task<ActionResult<string>> RegisterPatient(PatientSignUpModel patientSignUpModel)
+    public async Task<ActionResult<string>> RegisterPatient(PatientSignUpModel patientCredentials)
     {
-        var userExists = await _userManager.FindByEmailAsync(patientSignUpModel.Email);
+        var userExists = await _userManager.FindByEmailAsync(patientCredentials.Email);
         if (userExists != null)
             return BadRequest();
 
         IdentityUser<Guid> user = new()
         {
-            Email = patientSignUpModel.Email,
+            Email = patientCredentials.Email,
             SecurityStamp = Guid.NewGuid().ToString(),
-            UserName = patientSignUpModel.Email
+            UserName = patientCredentials.Email
         };
-        var signUpResult = await _userManager.CreateAsync(user, patientSignUpModel.Password);
+        var signUpResult = await _userManager.CreateAsync(user, patientCredentials.Password);
         if (!signUpResult.Succeeded)
             return BadRequest();
 
-        var signInResult =
-            await _signInManager
-                .PasswordSignInAsync(patientSignUpModel.Email, patientSignUpModel.Password, true,
-                false);
+        var signInResult = await _userManager.CheckPasswordAsync(user, patientCredentials.Password);
+
+        if (!signInResult)
+        {
+            return Unauthorized();
+        }
 
         var token = _tokenGenerator.GenerateToken(User.Claims);
         var tokenJson = new JwtSecurityTokenHandler().WriteToken(token);
