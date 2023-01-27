@@ -1,4 +1,4 @@
-namespace Innowise.Clinic.Auth;
+namespace Innowise.Clinic.Auth.Jwt;
 
 public class JwtData
 {

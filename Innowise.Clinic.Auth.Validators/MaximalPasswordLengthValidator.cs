@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace Innowise.Clinic.Auth;
+namespace Innowise.Clinic.Auth.Validators;
 
 public class MaximalPasswordLengthValidator<TUser> : IPasswordValidator<TUser>
     where TUser : IdentityUser<Guid>

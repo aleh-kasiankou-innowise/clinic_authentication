@@ -19,6 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Innowise.Clinic.Auth.DependencyInjection\Innowise.Clinic.Auth.DependencyInjection.csproj" />
       <ProjectReference Include="..\Innowise.Clinic.Auth.Models\Innowise.Clinic.Auth.Models.csproj" />
       <ProjectReference Include="..\Innowise.Clinic.Auth.Persistence\Innowise.Clinic.Auth.Persistence.csproj" />
     </ItemGroup>

@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using Innowise.Clinic.Auth.Jwt;
 using Innowise.Clinic.Auth.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

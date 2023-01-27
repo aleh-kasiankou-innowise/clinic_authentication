@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Innowise.Clinic.Auth;
+namespace Innowise.Clinic.Auth.Jwt.Interfaces;
 
 public class TokenGenerator : ITokenGenerator
 {
