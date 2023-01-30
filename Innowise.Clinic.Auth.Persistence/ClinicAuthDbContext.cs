@@ -10,4 +10,10 @@ public class ClinicAuthDbContext : IdentityDbContext<IdentityUser<Guid>, Identit
     {
         
     }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
+    }
 }

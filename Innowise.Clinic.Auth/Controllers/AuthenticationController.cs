@@ -36,17 +36,32 @@ public class AuthenticationController : ControllerBase
         };
         var signUpResult = await _userManager.CreateAsync(user, patientCredentials.Password);
         if (!signUpResult.Succeeded)
-            return BadRequest();
+        {
+            foreach (var error in signUpResult.Errors)
+            {
+                ModelState.TryAddModelError(error.Code, error.Description);
+            }
 
-        await _userManager.AddToRoleAsync(user, UserRoles.Patient.ToString());
+            return BadRequest(ModelState);
+        }
 
-        var userRoles = await _userManager.GetRolesAsync(user);
+        await _userManager.AddToRoleAsync(user, UserRoles.Patient);
+
+        var token = await GenerateJwtTokenForRegisteredUser(user);
+
+        return Ok(token);
+    }
+
+    private async Task<string> GenerateJwtTokenForRegisteredUser(IdentityUser<Guid> user)
+    {
+        var getUserRolesTask = _userManager.GetRolesAsync(user);
 
         var authClaims = new List<Claim>
         {
             new Claim(ClaimTypes.PrimarySid, user.Id.ToString()),
         };
 
+        var userRoles = await getUserRolesTask;
         foreach (var userRole in userRoles)
         {
             authClaims.Add(new Claim(ClaimTypes.Role, userRole));
@@ -54,6 +69,6 @@ public class AuthenticationController : ControllerBase
 
         var token = _tokenGenerator.GenerateToken(authClaims);
 
-        return Ok(token);
+        return token;
     }
 }

@@ -13,7 +13,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Innowise.Clinic.Auth.DependencyInjection;
 
-public static class DependencyManager
+public static class ConfigurationManager
 {
     public static IServiceCollection ConfigureIdentity(this IServiceCollection services)
     {
@@ -26,7 +26,7 @@ public static class DependencyManager
                 options.Password.RequireUppercase = false;
             })
             .AddEntityFrameworkStores<ClinicAuthDbContext>()
-            /*.AddDefaultTokenProviders()*/
+            .AddDefaultTokenProviders()
             .AddPasswordValidator<MaximalPasswordLengthValidator<IdentityUser<Guid>>>();
 
         return services;

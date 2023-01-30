@@ -1,8 +1,9 @@
 ﻿namespace Innowise.Clinic.Auth.Constants;
 
-public enum UserRoles
+public static class UserRoles
 {
-    Patient,
-    Receptionist,
-    Doctor
+    public const string Patient = "Patient";
+    public const string Receptionist = "Receptionist";
+    public const string Doctor = "Doctor";
+
 }

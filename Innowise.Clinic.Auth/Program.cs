@@ -1,8 +1,6 @@
-using Innowise.Clinic.Auth.Constants;
 using Innowise.Clinic.Auth.DependencyInjection;
 using Innowise.Clinic.Auth.Jwt;
 using Innowise.Clinic.Auth.Persistence;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,21 +30,6 @@ using (var scope = app.Services.CreateScope())
     {
         context.Database.Migrate();
         
-    }
-    
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-
-    var roles = Enum.GetValues(typeof(UserRoles));
-    
-    foreach (var role in roles)
-    {
-        var roleName = role.ToString();
-        
-        var roleExist = await roleManager.RoleExistsAsync(roleName);
-        if (!roleExist)
-        {
-            await roleManager.CreateAsync(new IdentityRole<Guid>(roleName)); //WhenAll ??
-        }
     }
 }
 
