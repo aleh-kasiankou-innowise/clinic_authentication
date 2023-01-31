@@ -2,7 +2,7 @@
 
 namespace Innowise.Clinic.Auth.DTO;
 
-public class PatientSignUpModel
+public class PatientSignUpDto
 {
     [EmailAddress]
     [Required(ErrorMessage = "Email is required")]

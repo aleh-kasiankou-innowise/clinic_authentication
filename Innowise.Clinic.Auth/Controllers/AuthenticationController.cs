@@ -22,7 +22,7 @@ public class AuthenticationController : ControllerBase
 
 
     [HttpPost("sign-up/patient")]
-    public async Task<ActionResult<AuthTokenPairDto>> RegisterPatient(PatientSignUpModel patientCredentials)
+    public async Task<ActionResult<AuthTokenPairDto>> RegisterPatient(PatientSignUpDto patientCredentials)
     {
         var userExists = await _userManager.FindByEmailAsync(patientCredentials.Email);
         if (userExists != null)

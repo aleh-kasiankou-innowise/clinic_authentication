@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.Consta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.Persistence.Models", "Innowise.Clinic.Auth.Persistence.Models\Innowise.Clinic.Auth.Persistence.Models.csproj", "{D53EAA02-40D8-4CAB-B821-C4F870C7443C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.IntegrationTesting", "Innowise.Clinic.Auth.IntegrationTesting\Innowise.Clinic.Auth.IntegrationTesting.csproj", "{8EDA9099-A4D1-4915-B838-AE5561E324EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +56,9 @@ Global
 		{D53EAA02-40D8-4CAB-B821-C4F870C7443C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D53EAA02-40D8-4CAB-B821-C4F870C7443C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D53EAA02-40D8-4CAB-B821-C4F870C7443C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EDA9099-A4D1-4915-B838-AE5561E324EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EDA9099-A4D1-4915-B838-AE5561E324EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EDA9099-A4D1-4915-B838-AE5561E324EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EDA9099-A4D1-4915-B838-AE5561E324EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
