@@ -22,6 +22,22 @@ namespace Innowise.Clinic.Auth.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("Innowise.Clinic.Auth.Persistence.Models.RefreshToken", b =>
+                {
+                    b.Property<Guid>("TokenId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("TokenId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
                     b.Property<Guid>("Id")
@@ -52,22 +68,22 @@ namespace Innowise.Clinic.Auth.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("9dcef89f-dc49-440f-9ab3-9579876f0318"),
-                            ConcurrencyStamp = "47cba5ab-09ed-4519-84dd-9d07a1ed8227",
+                            Id = new Guid("8c1054b3-6986-468b-8583-72e5c53f5a20"),
+                            ConcurrencyStamp = "6c47cf6b-2b04-4bac-a635-b8f107bfda8f",
                             Name = "Patient",
                             NormalizedName = "PATIENT"
                         },
                         new
                         {
-                            Id = new Guid("cefe4306-f476-4f23-84f8-425392e2adfe"),
-                            ConcurrencyStamp = "4cf4245a-4c9d-4a30-8987-bb8337021819",
+                            Id = new Guid("1bb5d47f-bab5-4135-945c-60da30ea104d"),
+                            ConcurrencyStamp = "03210297-b82e-4384-ae1a-ac2e7e900835",
                             Name = "Receptionist",
                             NormalizedName = "RECEPTIONIST"
                         },
                         new
                         {
-                            Id = new Guid("559ad71d-a52c-4973-ac27-324924b69716"),
-                            ConcurrencyStamp = "635a2ee9-192f-474b-bc3a-fd4ef935e9c9",
+                            Id = new Guid("c1460814-4592-4cd9-944e-691db26b315e"),
+                            ConcurrencyStamp = "e1a6dda4-f16b-4419-b587-9c483599238d",
                             Name = "Doctor",
                             NormalizedName = "DOCTOR"
                         });
@@ -240,6 +256,17 @@ namespace Innowise.Clinic.Auth.Persistence.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Innowise.Clinic.Auth.Persistence.Models.RefreshToken", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

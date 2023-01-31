@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Innowise.Clinic.Auth.Constants;
+using Innowise.Clinic.Auth.DTO;
 using Innowise.Clinic.Auth.Jwt.Interfaces;
-using Innowise.Clinic.Auth.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +22,7 @@ public class AuthenticationController : ControllerBase
 
 
     [HttpPost("sign-up/patient")]
-    public async Task<ActionResult<string>> RegisterPatient(PatientSignUpModel patientCredentials)
+    public async Task<ActionResult<AuthTokenPairDto>> RegisterPatient(PatientSignUpModel patientCredentials)
     {
         var userExists = await _userManager.FindByEmailAsync(patientCredentials.Email);
         if (userExists != null)
@@ -47,18 +47,36 @@ public class AuthenticationController : ControllerBase
 
         await _userManager.AddToRoleAsync(user, UserRoles.Patient);
 
-        var token = await GenerateJwtTokenForRegisteredUser(user);
+        var authTokens = await GenerateJwtAndRefreshToken(user);
 
-        return Ok(token);
+        return Ok(authTokens);
+    }
+    
+    [HttpPost("token/refresh")]
+    public async Task<ActionResult<string>> RefreshToken([FromBody] AuthTokenPairDto tokens,
+        [FromServices] ITokenValidator validator)
+    {
+        var principal = await validator.ValidateTokenPairAndExtractPrincipal(tokens);
+        return _tokenGenerator.GenerateJwtToken(principal);
     }
 
-    private async Task<string> GenerateJwtTokenForRegisteredUser(IdentityUser<Guid> user)
+    private async Task<AuthTokenPairDto> GenerateJwtAndRefreshToken(IdentityUser<Guid> user)
+    {
+        var principal = await GetRegisteredUserPrincipalAsync(user);
+        var jwtToken = _tokenGenerator.GenerateJwtToken(principal);
+        var refreshToken = await _tokenGenerator.GenerateRefreshTokenAsync(user.Id);
+        var authTokens = new AuthTokenPairDto(jwtToken, refreshToken);
+
+        return authTokens;
+    }
+
+    private async Task<ClaimsPrincipal> GetRegisteredUserPrincipalAsync(IdentityUser<Guid> user)
     {
         var getUserRolesTask = _userManager.GetRolesAsync(user);
 
         var authClaims = new List<Claim>
         {
-            new Claim(ClaimTypes.PrimarySid, user.Id.ToString()),
+            new(ClaimTypes.PrimarySid, user.Id.ToString()),
         };
 
         var userRoles = await getUserRolesTask;
@@ -67,8 +85,8 @@ public class AuthenticationController : ControllerBase
             authClaims.Add(new Claim(ClaimTypes.Role, userRole));
         }
 
-        var token = _tokenGenerator.GenerateToken(authClaims);
-
-        return token;
+        var claimsIdentity = new ClaimsIdentity(authClaims);
+        var principal = new ClaimsPrincipal(claimsIdentity);
+        return principal;
     }
 }

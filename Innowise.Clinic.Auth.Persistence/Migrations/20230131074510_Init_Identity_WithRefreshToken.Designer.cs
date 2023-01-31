@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Innowise.Clinic.Auth.Persistence.Migrations
 {
     [DbContext(typeof(ClinicAuthDbContext))]
-    [Migration("20230126125310_Init_Identity")]
-    partial class Init_Identity
+    [Migration("20230131074510_Init_Identity_WithRefreshToken")]
+    partial class Init_Identity_WithRefreshToken
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,6 +23,22 @@ namespace Innowise.Clinic.Auth.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("Innowise.Clinic.Auth.Persistence.Models.RefreshToken", b =>
+                {
+                    b.Property<Guid>("TokenId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("TokenId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
@@ -50,6 +66,29 @@ namespace Innowise.Clinic.Auth.Persistence.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("8c1054b3-6986-468b-8583-72e5c53f5a20"),
+                            ConcurrencyStamp = "6c47cf6b-2b04-4bac-a635-b8f107bfda8f",
+                            Name = "Patient",
+                            NormalizedName = "PATIENT"
+                        },
+                        new
+                        {
+                            Id = new Guid("1bb5d47f-bab5-4135-945c-60da30ea104d"),
+                            ConcurrencyStamp = "03210297-b82e-4384-ae1a-ac2e7e900835",
+                            Name = "Receptionist",
+                            NormalizedName = "RECEPTIONIST"
+                        },
+                        new
+                        {
+                            Id = new Guid("c1460814-4592-4cd9-944e-691db26b315e"),
+                            ConcurrencyStamp = "e1a6dda4-f16b-4419-b587-9c483599238d",
+                            Name = "Doctor",
+                            NormalizedName = "DOCTOR"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -219,6 +258,17 @@ namespace Innowise.Clinic.Auth.Persistence.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Innowise.Clinic.Auth.Persistence.Models.RefreshToken", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

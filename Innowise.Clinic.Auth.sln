@@ -4,15 +4,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth", "Inn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.Persistence", "Innowise.Clinic.Auth.Persistence\Innowise.Clinic.Auth.Persistence.csproj", "{CACE76F8-89AB-400C-99C1-B60DC770E2E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.Models", "Innowise.Clinic.Auth.Models\Innowise.Clinic.Auth.Models.csproj", "{988BF26F-AD83-4579-8E9B-D858368744B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.DTO", "Innowise.Clinic.Auth.DTO\Innowise.Clinic.Auth.DTO.csproj", "{988BF26F-AD83-4579-8E9B-D858368744B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.DependencyInjection", "Innowise.Clinic.Auth.DependencyInjection\Innowise.Clinic.Auth.DependencyInjection.csproj", "{07ED4A2A-BCDB-436D-AF64-3E3A72B6D669}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.Extensions", "Innowise.Clinic.Auth.Extensions\Innowise.Clinic.Auth.Extensions.csproj", "{07ED4A2A-BCDB-436D-AF64-3E3A72B6D669}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.Validators", "Innowise.Clinic.Auth.Validators\Innowise.Clinic.Auth.Validators.csproj", "{69D246B8-AD2B-432B-B76E-873D596C5ADC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.Jwt", "Innowise.Clinic.Auth.Jwt\Innowise.Clinic.Auth.Jwt.csproj", "{00195522-96A3-4325-96C6-EBCEBEFA712D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.Constants", "Innowise.Clinic.Auth.Constants\Innowise.Clinic.Auth.Constants.csproj", "{F4AB2A92-6364-48A3-8BD4-01A591F19C82}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.Persistence.Models", "Innowise.Clinic.Auth.Persistence.Models\Innowise.Clinic.Auth.Persistence.Models.csproj", "{D53EAA02-40D8-4CAB-B821-C4F870C7443C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,5 +50,9 @@ Global
 		{F4AB2A92-6364-48A3-8BD4-01A591F19C82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4AB2A92-6364-48A3-8BD4-01A591F19C82}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4AB2A92-6364-48A3-8BD4-01A591F19C82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D53EAA02-40D8-4CAB-B821-C4F870C7443C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D53EAA02-40D8-4CAB-B821-C4F870C7443C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D53EAA02-40D8-4CAB-B821-C4F870C7443C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D53EAA02-40D8-4CAB-B821-C4F870C7443C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

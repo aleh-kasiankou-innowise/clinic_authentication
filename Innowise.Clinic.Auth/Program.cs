@@ -1,5 +1,6 @@
-using Innowise.Clinic.Auth.DependencyInjection;
+using Innowise.Clinic.Auth.Extensions;
 using Innowise.Clinic.Auth.Jwt;
+using Innowise.Clinic.Auth.Jwt.Interfaces;
 using Innowise.Clinic.Auth.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,8 @@ builder.Services.AddDbContext<ClinicAuthDbContext>(
     opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("default")));
 builder.Services.AddAuthentication();
 
+
+builder.Services.AddScoped<ITokenValidator, TokenValidator>();
 builder.Services.ConfigureIdentity();
 builder.Services.Configure<JwtData>(builder.Configuration.GetSection("JWT"));
 builder.Services.ConfigureJwtAuthentication(builder.Configuration.GetSection("JWT"));

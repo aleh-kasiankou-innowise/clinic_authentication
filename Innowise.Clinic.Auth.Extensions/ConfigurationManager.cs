@@ -2,7 +2,7 @@
 using Innowise.Clinic.Auth.Jwt;
 using Innowise.Clinic.Auth.Jwt.Interfaces;
 using Innowise.Clinic.Auth.Persistence;
-using Innowise.Clinic.Auth.Validators;
+using Innowise.Clinic.Auth.Validators.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -11,7 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Innowise.Clinic.Auth.DependencyInjection;
+namespace Innowise.Clinic.Auth.Extensions;
 
 public static class ConfigurationManager
 {
@@ -27,9 +27,17 @@ public static class ConfigurationManager
             })
             .AddEntityFrameworkStores<ClinicAuthDbContext>()
             .AddDefaultTokenProviders()
-            .AddPasswordValidator<MaximalPasswordLengthValidator<IdentityUser<Guid>>>();
+            .AddPasswordValidators();
+
 
         return services;
+    }
+
+    public static IdentityBuilder AddPasswordValidators(this IdentityBuilder builder)
+    {
+        builder.AddPasswordValidator<MaximalPasswordLengthValidator<IdentityUser<Guid>>>();
+
+        return builder;
     }
 
     public static IServiceCollection ConfigureJwtAuthentication(this IServiceCollection services,
@@ -54,7 +62,7 @@ public static class ConfigurationManager
             };
         });
 
-        services.AddSingleton<ITokenGenerator, TokenGenerator>();
+        services.AddScoped<ITokenGenerator, TokenGenerator>();
 
         return services;
     }

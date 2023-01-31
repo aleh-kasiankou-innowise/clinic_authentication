@@ -20,4 +20,9 @@
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.26.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Innowise.Clinic.Auth.DTO\Innowise.Clinic.Auth.DTO.csproj" />
+      <ProjectReference Include="..\Innowise.Clinic.Auth.Persistence\Innowise.Clinic.Auth.Persistence.csproj" />
+    </ItemGroup>
+
 </Project>

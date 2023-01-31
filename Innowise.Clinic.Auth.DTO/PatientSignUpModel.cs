@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Innowise.Clinic.Auth.Models;
+namespace Innowise.Clinic.Auth.DTO;
 
 public class PatientSignUpModel
 {

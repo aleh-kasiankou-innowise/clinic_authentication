@@ -1,3 +1,4 @@
+using Innowise.Clinic.Auth.Validators.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Innowise.Clinic.Auth.Controllers;
@@ -6,11 +7,18 @@ namespace Innowise.Clinic.Auth.Controllers;
 [Route("auth/validation")]
 public class ValidationController : ControllerBase
 {
-    [HttpGet("email/{email:alpha}")]
-    public IActionResult CheckEmailUniqueness([FromRoute] string email)
-    {
-        // if valid return Ok()
+    private readonly IEmailValidator _emailValidator;
 
-        return BadRequest();
+    public ValidationController(IEmailValidator emailValidator)
+    {
+        _emailValidator = emailValidator;
+    }
+
+    [HttpGet("email/{email:alpha}")]
+    public async Task<IActionResult> CheckEmailUniqueness([FromRoute] string email)
+    {
+        var validationSucceeded = await _emailValidator.ValidateEmailAsync(email);
+
+        return validationSucceeded? Ok() : BadRequest();
     }
 }
