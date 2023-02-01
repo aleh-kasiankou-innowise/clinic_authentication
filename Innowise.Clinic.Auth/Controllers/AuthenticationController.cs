@@ -14,9 +14,7 @@ public class AuthenticationController : ControllerBase
     private readonly UserManager<IdentityUser<Guid>> _userManager;
     private readonly SignInManager<IdentityUser<Guid>> _signInManager;
     private readonly ITokenGenerator _tokenGenerator;
-
-    private const string FailedLoginMessage = "Either an email or a password is incorrect";
-
+    
     public AuthenticationController(UserManager<IdentityUser<Guid>> userManager, ITokenGenerator tokenGenerator,
         SignInManager<IdentityUser<Guid>> signInManager)
     {
@@ -27,7 +25,7 @@ public class AuthenticationController : ControllerBase
 
 
     [HttpPost("sign-up/patient")]
-    public async Task<ActionResult<AuthTokenPairDto>> RegisterPatient(PatientSignUpDto patientCredentials)
+    public async Task<ActionResult<AuthTokenPairDto>> RegisterPatient(PatientCredentialsDto patientCredentials)
     {
         var userExists = await _userManager.FindByEmailAsync(patientCredentials.Email);
         if (userExists != null)
@@ -58,7 +56,7 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPost("sign-in/patient")]
-    public async Task<ActionResult<AuthTokenPairDto>> SignInAsPatient(PatientSignUpDto patientCredentials)
+    public async Task<ActionResult<AuthTokenPairDto>> SignInAsPatient(PatientCredentialsDto patientCredentials)
     {
         var user = await _userManager.FindByEmailAsync(patientCredentials.Email);
         if (user != null)
@@ -74,7 +72,7 @@ public class AuthenticationController : ControllerBase
             }
         }
 
-        return BadRequest(FailedLoginMessage);
+        return BadRequest(ApiErrorMessage.FailedLoginMessage);
     }
 
 
