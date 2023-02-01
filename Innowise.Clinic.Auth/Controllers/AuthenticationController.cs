@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Innowise.Clinic.Auth.Constants;
 using Innowise.Clinic.Auth.DTO;
+using Innowise.Clinic.Auth.Extensions;
 using Innowise.Clinic.Auth.Jwt.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +15,15 @@ public class AuthenticationController : ControllerBase
     private readonly UserManager<IdentityUser<Guid>> _userManager;
     private readonly SignInManager<IdentityUser<Guid>> _signInManager;
     private readonly ITokenGenerator _tokenGenerator;
-    
+    private readonly ITokenRevoker _tokenRevoker;
+
     public AuthenticationController(UserManager<IdentityUser<Guid>> userManager, ITokenGenerator tokenGenerator,
-        SignInManager<IdentityUser<Guid>> signInManager)
+        SignInManager<IdentityUser<Guid>> signInManager, ITokenRevoker tokenRevoker)
     {
         _userManager = userManager;
         _tokenGenerator = tokenGenerator;
         _signInManager = signInManager;
+        _tokenRevoker = tokenRevoker;
     }
 
 
@@ -63,7 +66,7 @@ public class AuthenticationController : ControllerBase
         {
             var signInSucceeded =
                 await _signInManager.UserManager.CheckPasswordAsync(user, patientCredentials.Password);
-            
+
             if (signInSucceeded)
             {
                 var authTokens = await GenerateJwtAndRefreshToken(user);
@@ -72,7 +75,30 @@ public class AuthenticationController : ControllerBase
             }
         }
 
-        return BadRequest(ApiErrorMessage.FailedLoginMessage);
+        return BadRequest(ApiMessage.FailedLoginMessage);
+    }
+
+    [HttpPost("sign-out")]
+    public async Task<IActionResult> SignOutAsPatient(AuthTokenPairDto tokens,
+        [FromServices] ITokenValidator validator)
+    {
+        try
+        {
+            await validator.ValidateTokenPairAndExtractPrincipal(tokens, false);
+            var tokenId = tokens.GetRefreshTokenId();
+            await _tokenRevoker.RevokeTokenAsync(tokenId);
+        }
+
+        catch (ApplicationException e)
+        {
+            return BadRequest(e.Message);
+        }
+        catch (Exception)
+        {
+            return BadRequest();
+        }
+
+        return Ok();
     }
 
 
@@ -80,8 +106,17 @@ public class AuthenticationController : ControllerBase
     public async Task<ActionResult<string>> RefreshToken([FromBody] AuthTokenPairDto tokens,
         [FromServices] ITokenValidator validator)
     {
-        var principal = await validator.ValidateTokenPairAndExtractPrincipal(tokens);
-        return _tokenGenerator.GenerateJwtToken(principal);
+        try
+        {
+            var principal = await validator.ValidateTokenPairAndExtractPrincipal(tokens, true);
+            return _tokenGenerator.GenerateJwtToken(principal);
+        }
+        catch (Exception e)
+        {
+            var userId = tokens.GetUserId();
+            _tokenRevoker.RevokeAllUserTokens(userId);
+            return BadRequest();
+        }
     }
 
     private async Task<AuthTokenPairDto> GenerateJwtAndRefreshToken(IdentityUser<Guid> user)

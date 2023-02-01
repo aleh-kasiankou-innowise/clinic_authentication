@@ -63,6 +63,7 @@ public static class ConfigurationManager
         });
 
         services.AddScoped<ITokenGenerator, TokenGenerator>();
+        services.AddScoped<ITokenRevoker, RefreshTokenRevoker>();
 
         return services;
     }

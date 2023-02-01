@@ -474,7 +474,7 @@ public class AuthenticationControllerTests : IClassFixture<IntegrationTestingWeb
         // Assert
 
         Assert.False(response.IsSuccessStatusCode);
-        Assert.Equal(ApiErrorMessage.FailedLoginMessage, responseMessage);
+        Assert.Equal(ApiMessage.FailedLoginMessage, responseMessage);
     }
 
     [Fact]
