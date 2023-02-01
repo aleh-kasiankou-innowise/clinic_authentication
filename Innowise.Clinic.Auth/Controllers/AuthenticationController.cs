@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Innowise.Clinic.Auth.Controllers;
 
 [ApiController]
-[Route("auth")]
+[Route(ControllerRoutes.AuthenticationControllerRoute)]
 public class AuthenticationController : ControllerBase
 {
     private readonly UserManager<IdentityUser<Guid>> _userManager;
@@ -27,7 +27,7 @@ public class AuthenticationController : ControllerBase
     }
 
 
-    [HttpPost("sign-up/patient")]
+    [HttpPost(EndpointRoutes.SignUpEndpointRoute)]
     public async Task<ActionResult<AuthTokenPairDto>> RegisterPatient(PatientCredentialsDto patientCredentials)
     {
         var userExists = await _userManager.FindByEmailAsync(patientCredentials.Email);
@@ -58,7 +58,7 @@ public class AuthenticationController : ControllerBase
         return Ok(authTokens);
     }
 
-    [HttpPost("sign-in/patient")]
+    [HttpPost(EndpointRoutes.SignInEndpointRoute)]
     public async Task<ActionResult<AuthTokenPairDto>> SignInAsPatient(PatientCredentialsDto patientCredentials)
     {
         var user = await _userManager.FindByEmailAsync(patientCredentials.Email);
@@ -73,12 +73,14 @@ public class AuthenticationController : ControllerBase
 
                 return Ok(authTokens);
             }
+
+            await _tokenRevoker.RevokeAllUserTokensAsync(user.Id);
         }
 
-        return BadRequest(ApiMessage.FailedLoginMessage);
+        return BadRequest(ApiMessages.FailedLoginMessage);
     }
 
-    [HttpPost("sign-out")]
+    [HttpPost(EndpointRoutes.SignOutEndpointRoute)]
     public async Task<IActionResult> SignOutAsPatient(AuthTokenPairDto tokens,
         [FromServices] ITokenValidator validator)
     {
@@ -102,7 +104,7 @@ public class AuthenticationController : ControllerBase
     }
 
 
-    [HttpPost("token/refresh")]
+    [HttpPost(EndpointRoutes.RefreshTokenEndpointRoute)]
     public async Task<ActionResult<string>> RefreshToken([FromBody] AuthTokenPairDto tokens,
         [FromServices] ITokenValidator validator)
     {
