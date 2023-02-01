@@ -12,12 +12,17 @@ namespace Innowise.Clinic.Auth.Controllers;
 public class AuthenticationController : ControllerBase
 {
     private readonly UserManager<IdentityUser<Guid>> _userManager;
+    private readonly SignInManager<IdentityUser<Guid>> _signInManager;
     private readonly ITokenGenerator _tokenGenerator;
 
-    public AuthenticationController(UserManager<IdentityUser<Guid>> userManager, ITokenGenerator tokenGenerator)
+    private const string FailedLoginMessage = "Either an email or a password is incorrect";
+
+    public AuthenticationController(UserManager<IdentityUser<Guid>> userManager, ITokenGenerator tokenGenerator,
+        SignInManager<IdentityUser<Guid>> signInManager)
     {
         _userManager = userManager;
         _tokenGenerator = tokenGenerator;
+        _signInManager = signInManager;
     }
 
 
@@ -51,7 +56,28 @@ public class AuthenticationController : ControllerBase
 
         return Ok(authTokens);
     }
-    
+
+    [HttpPost("sign-in/patient")]
+    public async Task<ActionResult<AuthTokenPairDto>> SignInAsPatient(PatientSignUpDto patientCredentials)
+    {
+        var user = await _userManager.FindByEmailAsync(patientCredentials.Email);
+        if (user != null)
+        {
+            var signInSucceeded =
+                await _signInManager.UserManager.CheckPasswordAsync(user, patientCredentials.Password);
+            
+            if (signInSucceeded)
+            {
+                var authTokens = await GenerateJwtAndRefreshToken(user);
+
+                return Ok(authTokens);
+            }
+        }
+
+        return BadRequest(FailedLoginMessage);
+    }
+
+
     [HttpPost("token/refresh")]
     public async Task<ActionResult<string>> RefreshToken([FromBody] AuthTokenPairDto tokens,
         [FromServices] ITokenValidator validator)
