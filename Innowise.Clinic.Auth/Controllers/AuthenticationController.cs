@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using Innowise.Clinic.Auth.Constants;
-using Innowise.Clinic.Auth.DTO;
+using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Extensions;
 using Innowise.Clinic.Auth.Jwt.Interfaces;
 using Microsoft.AspNetCore.Identity;

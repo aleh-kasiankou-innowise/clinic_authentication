@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Innowise.Clinic.Auth.DTO\Innowise.Clinic.Auth.DTO.csproj" />
+      <ProjectReference Include="..\Innowise.Clinic.Auth.Dto\Innowise.Clinic.Auth.Dto.csproj" />
       <ProjectReference Include="..\Innowise.Clinic.Auth.Persistence\Innowise.Clinic.Auth.Persistence.csproj" />
       <ProjectReference Include="..\Innowise.Clinic.Auth\Innowise.Clinic.Auth.csproj" />
     </ItemGroup>

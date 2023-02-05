@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using Innowise.Clinic.Auth.DTO;
+using Innowise.Clinic.Auth.Dto;
 
 namespace Innowise.Clinic.Auth.Jwt.Interfaces;
 

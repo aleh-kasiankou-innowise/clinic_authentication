@@ -4,8 +4,20 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <AssemblyName>Innowise.Clinic.Auth.DTO</AssemblyName>
-        <RootNamespace>Innowise.Clinic.Auth.DTO</RootNamespace>
+        <AssemblyName>Innowise.Clinic.Auth.Dto</AssemblyName>
+        <RootNamespace>Innowise.Clinic.Auth.Dto</RootNamespace>
+        <PackageId>Innowise.Clinic.Auth.Dto</PackageId>
+        <Authors>Innowise.Clinic.Auth.Dto</Authors>
+        <Company>Innowise.Clinic.Auth.Dto</Company>
+        <Product>Innowise.Clinic.Auth.Dto</Product>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <PlatformTarget>x64</PlatformTarget>
     </PropertyGroup>
 
     <ItemGroup>

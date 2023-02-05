@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Innowise.Clinic.Auth.DTO;
+namespace Innowise.Clinic.Auth.Dto;
 
 public class PatientCredentialsDto
 {

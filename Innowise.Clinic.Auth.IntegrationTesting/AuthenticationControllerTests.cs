@@ -7,7 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Innowise.Clinic.Auth.Constants;
-using Innowise.Clinic.Auth.DTO;
+using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Extensions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
