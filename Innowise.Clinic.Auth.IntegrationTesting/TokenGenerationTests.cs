@@ -6,8 +6,11 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Innowise.Clinic.Auth.Dto;
+using Innowise.Clinic.Auth.Jwt;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Xunit;
 
@@ -17,6 +20,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 {
     private readonly IntegrationTestingWebApplicationFactory _factory;
     private readonly HttpClient _httpClient;
+    private readonly IOptions<JwtData> _jwtData;
 
     public TokenGenerationTests(IntegrationTestingWebApplicationFactory factory)
     {
@@ -25,6 +29,8 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         {
             AllowAutoRedirect = false
         });
+
+        _jwtData = _factory.Services.GetService<IOptions<JwtData>>() ?? throw new InvalidOperationException();
     }
 
 
@@ -80,7 +86,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
             await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, userRegistrationDataWithRegisteredEmail);
         var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
 
-        await Task.Delay(_factory.UseConfiguration(x => x.GetValue<int>("JWT:TokenValidityInMinutes") * 60000));
+        await Task.Delay(_jwtData.Value.TokenValidityInSeconds * 1000);
 
         response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri, generatedTokens);
         var refreshedToken = await response.Content.ReadAsStringAsync();
@@ -223,7 +229,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var invalidTokenJson = new JwtSecurityTokenHandler().WriteToken(invalidRefreshToken);
 
-        await Task.Delay(_factory.UseConfiguration(x => x.GetValue<int>("JWT:TokenValidityInMinutes") * 60000));
+        await Task.Delay(_jwtData.Value.TokenValidityInSeconds * 1000);
 
 
         response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri,
@@ -266,7 +272,8 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var invalidTokenJson = new JwtSecurityTokenHandler().WriteToken(invalidRefreshToken);
 
-        await Task.Delay(_factory.UseConfiguration(x => x.GetValue<int>("JWT:TokenValidityInMinutes") * 60000));
+        await Task.Delay(_jwtData.Value.TokenValidityInSeconds * 1000);
+
 
         response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri,
             new AuthTokenPairDto(generatedTokens.JwtToken, invalidTokenJson));

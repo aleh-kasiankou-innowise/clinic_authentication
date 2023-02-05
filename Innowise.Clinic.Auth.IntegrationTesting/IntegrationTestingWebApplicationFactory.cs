@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
+using Innowise.Clinic.Auth.Jwt;
 using Innowise.Clinic.Auth.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -67,6 +68,11 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
             services.AddDbContext<ClinicAuthDbContext>(options =>
             {
                 options.UseSqlServer(BuildConnectionString(_port));
+            });
+
+            services.Configure<JwtData>(x =>
+            {
+                x.TokenValidityInSeconds = 5;
             });
         });
     }
