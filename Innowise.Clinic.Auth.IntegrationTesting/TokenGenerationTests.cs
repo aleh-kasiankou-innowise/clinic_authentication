@@ -56,10 +56,10 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
 
         Assert.NotNull(generatedTokens);
-        Assert.NotNull(generatedTokens.JwtToken);
+        Assert.NotNull(generatedTokens.SecurityToken);
         Assert.NotNull(generatedTokens.RefreshToken);
 
-        var userId = TestHelper.ExtractUserIdFromJwtToken(generatedTokens.JwtToken);
+        var userId = TestHelper.ExtractUserIdFromJwtToken(generatedTokens.SecurityToken);
         var refreshTokenId = TestHelper.ExtractRefreshTokenId(generatedTokens.RefreshToken);
 
 
@@ -145,7 +145,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
             signingCredentials: new SigningCredentials(new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes("123456791011121314151617181920")),
                 SecurityAlgorithms.HmacSha256),
-            claims: TestHelper.ValidateJwtToken(_factory, generatedTokens.JwtToken).Claims
+            claims: TestHelper.ValidateJwtToken(_factory, generatedTokens.SecurityToken).Claims
         );
 
         var invalidTokenJson = new JwtSecurityTokenHandler().WriteToken(invalidJwtToken);
@@ -184,7 +184,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
             signingCredentials: new SigningCredentials(new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(_factory.UseConfiguration(x => x.GetValue<string>("JWT:Key")))),
                 SecurityAlgorithms.HmacSha256),
-            claims: TestHelper.ValidateJwtToken(_factory, generatedTokens.JwtToken).Claims
+            claims: TestHelper.ValidateJwtToken(_factory, generatedTokens.SecurityToken).Claims
         );
 
         var invalidTokenJson = new JwtSecurityTokenHandler().WriteToken(invalidJwtToken);
@@ -233,7 +233,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
 
         response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri,
-            new AuthTokenPairDto(generatedTokens.JwtToken, invalidTokenJson));
+            new AuthTokenPairDto(generatedTokens.SecurityToken, invalidTokenJson));
 
         // Assert
 
@@ -276,7 +276,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
 
         response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri,
-            new AuthTokenPairDto(generatedTokens.JwtToken, invalidTokenJson));
+            new AuthTokenPairDto(generatedTokens.SecurityToken, invalidTokenJson));
 
         // Assert
 

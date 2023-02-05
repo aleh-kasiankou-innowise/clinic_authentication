@@ -20,6 +20,10 @@
       <PlatformTarget>x64</PlatformTarget>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
     <ItemGroup>
         <Reference Include="Microsoft.Extensions.Identity.Stores">
             <HintPath>..\..\..\..\..\.nuget\packages\microsoft.extensions.identity.stores\6.0.13\lib\net6.0\Microsoft.Extensions.Identity.Stores.dll</HintPath>

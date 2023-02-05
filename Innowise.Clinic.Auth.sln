@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth", "Innowise.Clinic.Auth\Innowise.Clinic.Auth.csproj", "{82CB6601-2159-426E-9FF7-214A0AC1B59B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.Api", "Innowise.Clinic.Auth.Api\Innowise.Clinic.Auth.Api.csproj", "{82CB6601-2159-426E-9FF7-214A0AC1B59B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.Persistence", "Innowise.Clinic.Auth.Persistence\Innowise.Clinic.Auth.Persistence.csproj", "{CACE76F8-89AB-400C-99C1-B60DC770E2E3}"
 EndProject

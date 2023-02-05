@@ -25,7 +25,7 @@ public class TokenValidator : ITokenValidator
     public async Task<ClaimsPrincipal> ValidateTokenPairAndExtractPrincipal(AuthTokenPairDto authTokens,
         bool tokenShouldBeExpired)
     {
-        var principal = ExtractPrincipalFromJwtToken(authTokens.JwtToken, tokenShouldBeExpired);
+        var principal = ExtractPrincipalFromJwtToken(authTokens.SecurityToken, tokenShouldBeExpired);
 
         await ValidateRefreshTokenAsync(authTokens.RefreshToken);
 

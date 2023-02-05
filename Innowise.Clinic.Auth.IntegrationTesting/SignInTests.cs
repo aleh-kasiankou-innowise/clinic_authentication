@@ -48,10 +48,10 @@ public class SignInTests : IClassFixture<IntegrationTestingWebApplicationFactory
 
 
         Assert.NotNull(generatedTokens);
-        Assert.NotNull(generatedTokens.JwtToken);
+        Assert.NotNull(generatedTokens.SecurityToken);
         Assert.NotNull(generatedTokens.RefreshToken);
 
-        var userId = TestHelper.ExtractUserIdFromJwtToken(generatedTokens.JwtToken);
+        var userId = TestHelper.ExtractUserIdFromJwtToken(generatedTokens.SecurityToken);
         Assert.NotNull(_factory.UseDbContext(x =>
             x.Users.SingleOrDefaultAsync(u => u.Id == userId && u.Email == validUserRegistrationData.Email)));
     }

@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
+using Innowise.Clinic.Auth.Api;
 using Innowise.Clinic.Auth.Jwt;
 using Innowise.Clinic.Auth.Persistence;
 using Microsoft.AspNetCore.Hosting;
