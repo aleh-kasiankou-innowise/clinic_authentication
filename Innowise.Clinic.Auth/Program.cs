@@ -1,6 +1,6 @@
 using Innowise.Clinic.Auth.Extensions;
 using Innowise.Clinic.Auth.Jwt;
-using Innowise.Clinic.Auth.Jwt;
+using Innowise.Clinic.Auth.Mail;
 using Innowise.Clinic.Auth.Persistence;
 using Microsoft.EntityFrameworkCore;
 
