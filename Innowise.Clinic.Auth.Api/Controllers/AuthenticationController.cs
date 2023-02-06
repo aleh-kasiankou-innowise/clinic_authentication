@@ -81,7 +81,7 @@ public class AuthenticationController : ControllerBase
                 var emailBody = EmailBodyBuilder.BuildBodyForEmailConfirmation(tokenConfirmationLink);
 
                 _emailHandler.SendMessage(patientCredentials.Email, EmailSubjects.EmailConfirmation, emailBody);
-                
+
                 return Ok(authTokens);
             }
 
@@ -144,7 +144,6 @@ public class AuthenticationController : ControllerBase
     [ProducesResponseType(typeof(void), 200)]
     [ProducesResponseType(typeof(void), 401)]
     public async Task<IActionResult> SignOutAsPatient(AuthTokenPairDto tokens,
-        // ReSharper disable once InvalidXmlDocComment
         [FromServices] ITokenValidator validator)
     {
         try
@@ -183,11 +182,20 @@ public class AuthenticationController : ControllerBase
         catch (Exception e)
         {
             var userId = tokens.GetUserId();
-            _tokenRevoker.RevokeAllUserTokens(userId);
+            await _tokenRevoker.RevokeAllUserTokensAsync(userId);
             return Unauthorized();
         }
     }
 
+    /// <summary>
+    /// Confirms user email.
+    /// </summary>
+    /// <param name="emailConfirmationToken">Token sent to the email specified by user and encoded in the email confirmation link.</param>
+    /// <param name="userId">Id of the user whose email is being confirmed.</param>
+    /// <response code="200"> Success. Email is confirmed.</response>
+    /// <response code="400"> Fail. Email is not confirmed. Response contains explanation of the issue. </response>
+    [ProducesResponseType(typeof(void), 200)]
+    [ProducesResponseType(typeof(string), 400)]
     [HttpGet("email/confirm/{emailConfirmationToken:required}")]
     public async Task<IActionResult> ConfirmUserEmail([FromRoute] string emailConfirmationToken,
         [FromQuery] [Required] string userId)
