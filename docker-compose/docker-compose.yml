@@ -9,7 +9,7 @@ services:
     
     build:
       context: ../
-      dockerfile: ./Innowise.Clinic.Auth/Dockerfile
+      dockerfile: ./Innowise.Clinic.Auth.Api/Dockerfile
     environment:
       - AuthApiUrl=http://localhost:25570/
       
