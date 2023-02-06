@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Innowise.Clinic.Auth.DTO;
+using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Jwt.Exceptions;
 using Innowise.Clinic.Auth.Jwt.Interfaces;
 using Innowise.Clinic.Auth.Persistence;
@@ -25,7 +25,7 @@ public class TokenValidator : ITokenValidator
     public async Task<ClaimsPrincipal> ValidateTokenPairAndExtractPrincipal(AuthTokenPairDto authTokens,
         bool tokenShouldBeExpired)
     {
-        var principal = ExtractPrincipalFromJwtToken(authTokens.JwtToken, tokenShouldBeExpired);
+        var principal = ExtractPrincipalFromJwtToken(authTokens.SecurityToken, tokenShouldBeExpired);
 
         await ValidateRefreshTokenAsync(authTokens.RefreshToken);
 

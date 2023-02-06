@@ -1,6 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Innowise.Clinic.Auth.DTO;
+using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Extensions.Exceptions;
 using Innowise.Clinic.Auth.Jwt.Exceptions;
 

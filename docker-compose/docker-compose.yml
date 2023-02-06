@@ -9,7 +9,7 @@ services:
     
     build:
       context: ../
-      dockerfile: ./Innowise.Clinic.Auth/Dockerfile
+      dockerfile: ./Innowise.Clinic.Auth.Api/Dockerfile
     ports:
       - "127.0.0.1:25570:80"
       - "127.0.0.1:25575:443"

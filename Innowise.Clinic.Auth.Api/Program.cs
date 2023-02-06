@@ -1,3 +1,5 @@
+using System.Reflection;
+using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Extensions;
 using Innowise.Clinic.Auth.Jwt;
 using Innowise.Clinic.Auth.Persistence;
@@ -7,7 +9,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options => options.ConfigureSwaggerJwtSupport());
+builder.Services.AddSwaggerGen(options =>
+{
+    options.ConfigureSwaggerJwtSupport();
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory,
+        $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory,
+        $"{Assembly.GetAssembly(typeof(AuthTokenPairDto))?.GetName().Name}.xml"));
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory,
+        $"{Assembly.GetAssembly(typeof(PatientCredentialsDto))?.GetName().Name}.xml"));
+});
 builder.Services.AddDbContext<ClinicAuthDbContext>(
     opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("default")));
 builder.Services.AddAuthentication();
@@ -42,6 +53,9 @@ app.MapControllers();
 
 app.Run();
 
-public partial class Program
+namespace Innowise.Clinic.Auth.Api
 {
+    public partial class Program
+    {
+    }
 }

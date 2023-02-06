@@ -24,7 +24,7 @@ public class TokenGenerator : ITokenGenerator
 
     public string GenerateJwtToken(ClaimsPrincipal principal)
     {
-        var expirationDate = DateTime.UtcNow.AddMinutes(_jwtOptions.Value.TokenValidityInMinutes);
+        var expirationDate = DateTime.UtcNow.AddSeconds(_jwtOptions.Value.TokenValidityInSeconds);
 
         var token = IssueToken(expirationDate, principal.Claims);
 
@@ -35,7 +35,7 @@ public class TokenGenerator : ITokenGenerator
     {
         var expirationDate = DateTime.UtcNow.AddDays(_jwtOptions.Value.RefreshTokenValidityInDays);
 
-        var tokenId = await RegisterIssuedRefreshTokenInDbAsync(userId, expirationDate);
+        var tokenId = await RegisterIssuedRefreshTokenInDbAsync(userId);
 
         var refreshTokenClaimsCollection = new List<Claim>
         {
@@ -58,7 +58,7 @@ public class TokenGenerator : ITokenGenerator
         );
     }
 
-    private async Task<Guid> RegisterIssuedRefreshTokenInDbAsync(Guid userId, DateTime expirationDate)
+    private async Task<Guid> RegisterIssuedRefreshTokenInDbAsync(Guid userId)
     {
         var refreshToken = new RefreshToken()
         {
