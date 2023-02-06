@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.Persis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.IntegrationTesting", "Innowise.Clinic.Auth.IntegrationTesting\Innowise.Clinic.Auth.IntegrationTesting.csproj", "{8EDA9099-A4D1-4915-B838-AE5561E324EA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.Mail", "Innowise.Clinic.Auth.Mail\Innowise.Clinic.Auth.Mail.csproj", "{50292CFD-D715-40E6-923D-1EBC34593E53}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,5 +62,9 @@ Global
 		{8EDA9099-A4D1-4915-B838-AE5561E324EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EDA9099-A4D1-4915-B838-AE5561E324EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8EDA9099-A4D1-4915-B838-AE5561E324EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50292CFD-D715-40E6-923D-1EBC34593E53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50292CFD-D715-40E6-923D-1EBC34593E53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50292CFD-D715-40E6-923D-1EBC34593E53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50292CFD-D715-40E6-923D-1EBC34593E53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

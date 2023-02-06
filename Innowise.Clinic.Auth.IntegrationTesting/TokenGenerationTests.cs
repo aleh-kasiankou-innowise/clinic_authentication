@@ -89,7 +89,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         await Task.Delay(_jwtData.Value.TokenValidityInSeconds * 1000);
 
         response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri, generatedTokens);
-        var refreshedToken = await response.Content.ReadAsStringAsync();
+        var refreshedToken = await response.Content.ReadFromJsonAsync<string>();
         // Assert
 
         Assert.True(response.IsSuccessStatusCode);

@@ -21,6 +21,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Innowise.Clinic.Auth.Jwt\Innowise.Clinic.Auth.Jwt.csproj" />
+        <ProjectReference Include="..\Innowise.Clinic.Auth.Mail\Innowise.Clinic.Auth.Mail.csproj" />
         <ProjectReference Include="..\Innowise.Clinic.Auth.Persistence\Innowise.Clinic.Auth.Persistence.csproj" />
         <ProjectReference Include="..\Innowise.Clinic.Auth.Validators\Innowise.Clinic.Auth.Validators.csproj" />
     </ItemGroup>

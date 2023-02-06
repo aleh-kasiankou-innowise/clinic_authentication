@@ -2,6 +2,7 @@ using System.Reflection;
 using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Extensions;
 using Innowise.Clinic.Auth.Jwt;
+using Innowise.Clinic.Auth.Mail;
 using Innowise.Clinic.Auth.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,7 +26,9 @@ builder.Services.AddAuthentication();
 builder.Services.ConfigureCustomValidators();
 builder.Services.ConfigureIdentity();
 builder.Services.Configure<JwtData>(builder.Configuration.GetSection("JWT"));
+builder.Services.Configure<SmtpData>(builder.Configuration.GetSection("AuthSmtp"));
 builder.Services.ConfigureJwtAuthentication(builder.Configuration.GetSection("JWT"));
+builder.Services.ConfigureEmailServices();
 
 var app = builder.Build();
 

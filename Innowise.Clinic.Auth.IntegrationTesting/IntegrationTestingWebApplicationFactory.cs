@@ -7,6 +7,7 @@ using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using Innowise.Clinic.Auth.Api;
 using Innowise.Clinic.Auth.Jwt;
+using Innowise.Clinic.Auth.Mail;
 using Innowise.Clinic.Auth.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -20,15 +21,19 @@ namespace Innowise.Clinic.Auth.IntegrationTesting;
 public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly TestcontainersContainer _dbContainer;
-
+    private readonly TestcontainersContainer _mailContainer;
 
     private const string ContainerHost = "localhost";
-    private readonly int _port = GetFreeTcpPort();
+    private readonly int _dbPort = GetFreeTcpPort();
+    private readonly int _smtpPort = GetFreeTcpPort();
+    private readonly int _imapPort = GetFreeTcpPort();
 
     public IntegrationTestingWebApplicationFactory()
     {
         _dbContainer = PrepareDbContainer();
+        _mailContainer = PrepareMailContainer();
     }
+
 
     private const string ContainerDbName = "AuthDb";
     private const string ContainerDbUserName = "SA";
@@ -68,12 +73,14 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
 
             services.AddDbContext<ClinicAuthDbContext>(options =>
             {
-                options.UseSqlServer(BuildConnectionString(_port));
+                options.UseSqlServer(BuildConnectionString(_dbPort));
             });
 
-            services.Configure<JwtData>(x =>
+            services.Configure<JwtData>(x => { x.TokenValidityInSeconds = 5; });
+            services.Configure<SmtpData>(x =>
             {
-                x.TokenValidityInSeconds = 5;
+                x.SmtpServerHost = ContainerHost;
+                x.SmtpServerPort = _smtpPort;
             });
         });
     }
@@ -81,11 +88,13 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
     public async Task InitializeAsync()
     {
         await _dbContainer.StartAsync();
+        await _mailContainer.StartAsync();
     }
 
     public async Task DisposeAsync()
     {
         await _dbContainer.StopAsync();
+        await _mailContainer.StopAsync();
         await base.DisposeAsync();
     }
 
@@ -94,8 +103,18 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
         return new TestcontainersBuilder<TestcontainersContainer>()
             .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
             .WithEnvironment("SA_PASSWORD", "secureMssqlServerPassw0rd").WithEnvironment(
-                "ACCEPT_EULA", "Y").WithPortBinding(_port, 1433)
+                "ACCEPT_EULA", "Y").WithPortBinding(_dbPort, 1433)
             .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(1433)).Build();
+    }
+    
+    private TestcontainersContainer PrepareMailContainer()
+    {
+        return new TestcontainersBuilder<TestcontainersContainer>()
+            .WithImage("rnwood/smtp4dev:v3")
+            .WithPortBinding(_smtpPort, 25)
+            .WithPortBinding(_imapPort, 143)
+            .WithEnvironment("ServerOptions__HostName", "smtp4dev")
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(25)).Build();
     }
 
     private static string BuildConnectionString(int port)

@@ -1,10 +1,16 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using System.Text;
 using Innowise.Clinic.Auth.Constants;
 using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Extensions;
 using Innowise.Clinic.Auth.Jwt.Interfaces;
+using Innowise.Clinic.Auth.Mail;
+using Innowise.Clinic.Auth.Mail.Constants;
+using Innowise.Clinic.Auth.Mail.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Innowise.Clinic.Auth.Api.Controllers;
 
@@ -22,15 +28,18 @@ public class AuthenticationController : ControllerBase
     private readonly SignInManager<IdentityUser<Guid>> _signInManager;
     private readonly ITokenGenerator _tokenGenerator;
     private readonly ITokenRevoker _tokenRevoker;
+    private readonly IEmailHandler _emailHandler;
 
     /// <inheritdoc />
     public AuthenticationController(UserManager<IdentityUser<Guid>> userManager, ITokenGenerator tokenGenerator,
-        SignInManager<IdentityUser<Guid>> signInManager, ITokenRevoker tokenRevoker)
+        SignInManager<IdentityUser<Guid>> signInManager, ITokenRevoker tokenRevoker,
+        IEmailHandler emailHandler)
     {
         _userManager = userManager;
         _tokenGenerator = tokenGenerator;
         _signInManager = signInManager;
         _tokenRevoker = tokenRevoker;
+        _emailHandler = emailHandler;
     }
 
     /// <summary>Creates account for unregistered patient.</summary>
@@ -61,6 +70,17 @@ public class AuthenticationController : ControllerBase
                 await _userManager.AddToRoleAsync(user, UserRoles.Patient);
 
                 var authTokens = await GenerateJwtAndRefreshToken(user);
+
+                var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                byte[] tokenGeneratedBytes = Encoding.UTF8.GetBytes(emailConfirmationToken);
+                var tokenEncoded = WebEncoders.Base64UrlEncode(tokenGeneratedBytes);
+                var tokenConfirmationLink = Environment.GetEnvironmentVariable("AuthApiUrl") + "auth/email/confirm/" +
+                                            tokenEncoded + $"?userid={user.Id}";
+
+                var emailBody = EmailBodyBuilder.BuildBodyForEmailConfirmation(tokenConfirmationLink);
+
+                _emailHandler.SendMessage(patientCredentials.Email, EmailSubjects.EmailConfirmation, emailBody);
 
                 return Ok(authTokens);
             }
@@ -104,7 +124,6 @@ public class AuthenticationController : ControllerBase
             if (signInSucceeded)
             {
                 var authTokens = await GenerateJwtAndRefreshToken(user);
-
                 return Ok(authTokens);
             }
 
@@ -125,7 +144,6 @@ public class AuthenticationController : ControllerBase
     [ProducesResponseType(typeof(void), 200)]
     [ProducesResponseType(typeof(void), 401)]
     public async Task<IActionResult> SignOutAsPatient(AuthTokenPairDto tokens,
-        // ReSharper disable once InvalidXmlDocComment
         [FromServices] ITokenValidator validator)
     {
         try
@@ -164,9 +182,42 @@ public class AuthenticationController : ControllerBase
         catch (Exception e)
         {
             var userId = tokens.GetUserId();
-            _tokenRevoker.RevokeAllUserTokens(userId);
+            await _tokenRevoker.RevokeAllUserTokensAsync(userId);
             return Unauthorized();
         }
+    }
+
+    /// <summary>
+    /// Confirms user email.
+    /// </summary>
+    /// <param name="emailConfirmationToken">Token sent to the email specified by user and encoded in the email confirmation link.</param>
+    /// <param name="userId">Id of the user whose email is being confirmed.</param>
+    /// <response code="200"> Success. Email is confirmed.</response>
+    /// <response code="400"> Fail. Email is not confirmed. Response contains explanation of the issue. </response>
+    [ProducesResponseType(typeof(void), 200)]
+    [ProducesResponseType(typeof(string), 400)]
+    [HttpGet("email/confirm/{emailConfirmationToken:required}")]
+    public async Task<IActionResult> ConfirmUserEmail([FromRoute] string emailConfirmationToken,
+        [FromQuery] [Required] string userId)
+    {
+        var emailConfirmationTokenBytes = WebEncoders.Base64UrlDecode(emailConfirmationToken);
+        emailConfirmationToken = Encoding.UTF8.GetString(emailConfirmationTokenBytes);
+
+        var user = await _userManager.FindByIdAsync(userId);
+
+        var confirmation = await _userManager.ConfirmEmailAsync(user, emailConfirmationToken);
+
+        if (!confirmation.Succeeded)
+        {
+            foreach (var error in confirmation.Errors)
+            {
+                ModelState.TryAddModelError(error.Code, error.Description);
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        return Ok();
     }
 
     private async Task<AuthTokenPairDto> GenerateJwtAndRefreshToken(IdentityUser<Guid> user)

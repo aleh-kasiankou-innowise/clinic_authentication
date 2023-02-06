@@ -1,6 +1,8 @@
 ﻿using System.Text;
 using Innowise.Clinic.Auth.Jwt;
 using Innowise.Clinic.Auth.Jwt.Interfaces;
+using Innowise.Clinic.Auth.Mail;
+using Innowise.Clinic.Auth.Mail.Interfaces;
 using Innowise.Clinic.Auth.Persistence;
 using Innowise.Clinic.Auth.Validators.Custom;
 using Innowise.Clinic.Auth.Validators.Identity;
@@ -35,11 +37,17 @@ public static class ConfigurationManager
         return services;
     }
 
-    public static IdentityBuilder AddPasswordValidators(this IdentityBuilder builder)
+    private static IdentityBuilder AddPasswordValidators(this IdentityBuilder builder)
     {
         builder.AddPasswordValidator<MaximalPasswordLengthValidator<IdentityUser<Guid>>>();
 
         return builder;
+    }
+
+    public static IServiceCollection ConfigureEmailServices(this IServiceCollection services)
+    {
+        services.AddScoped<IEmailHandler, EmailSender>();
+        return services;
     }
 
     public static IServiceCollection ConfigureJwtAuthentication(this IServiceCollection services,
