@@ -30,7 +30,7 @@ public class EmailSender : IEmailHandler
 
         using (var client = new SmtpClient())
         {
-            client.Connect(_smtpData.Value.SmtpServerHost, _smtpData.Value.SmetpServerPort, false);
+            client.Connect(_smtpData.Value.SmtpServerHost, _smtpData.Value.SmtpServerPort, false);
 
             /*// Note: only needed if the SMTP server requires authentication
             client.Authenticate ("joey", "password");*/

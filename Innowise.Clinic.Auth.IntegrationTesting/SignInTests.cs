@@ -78,7 +78,7 @@ public class SignInTests : IClassFixture<IntegrationTestingWebApplicationFactory
         // Act
 
         var response = await _httpClient.PostAsJsonAsync(TestHelper.SignInEndpointUri, invalidUserCredentials);
-        var responseMessage = await response.Content.ReadAsStringAsync();
+        var responseMessage = await response.Content.ReadFromJsonAsync<string>();
 
         // Assert
 
