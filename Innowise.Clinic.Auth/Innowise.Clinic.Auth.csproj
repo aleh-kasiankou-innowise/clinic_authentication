@@ -11,6 +11,7 @@
       <ProjectReference Include="..\Innowise.Clinic.Auth.Constants\Innowise.Clinic.Auth.Constants.csproj" />
       <ProjectReference Include="..\Innowise.Clinic.Auth.Extensions\Innowise.Clinic.Auth.Extensions.csproj" />
       <ProjectReference Include="..\Innowise.Clinic.Auth.DTO\Innowise.Clinic.Auth.DTO.csproj" />
+      <ProjectReference Include="..\Innowise.Clinic.Auth.Mail\Innowise.Clinic.Auth.Mail.csproj" />
       <ProjectReference Include="..\Innowise.Clinic.Auth.Persistence\Innowise.Clinic.Auth.Persistence.csproj" />
     </ItemGroup>
 

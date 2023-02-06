@@ -1,6 +1,7 @@
 using Innowise.Clinic.Auth.Extensions;
 using Innowise.Clinic.Auth.Jwt;
 using Innowise.Clinic.Auth.Jwt.Interfaces;
+using Innowise.Clinic.Auth.Mail;
 using Innowise.Clinic.Auth.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +18,9 @@ builder.Services.AddAuthentication();
 builder.Services.AddScoped<ITokenValidator, TokenValidator>();
 builder.Services.ConfigureIdentity();
 builder.Services.Configure<JwtData>(builder.Configuration.GetSection("JWT"));
+builder.Services.Configure<SmtpData>(builder.Configuration.GetSection("AuthSmtp"));
 builder.Services.ConfigureJwtAuthentication(builder.Configuration.GetSection("JWT"));
+builder.Services.ConfigureEmailServices();
 
 var app = builder.Build();
 
@@ -32,7 +35,6 @@ using (var scope = app.Services.CreateScope())
     if (context.Database.GetPendingMigrations().Any())
     {
         context.Database.Migrate();
-        
     }
 }
 
@@ -46,6 +48,9 @@ app.MapControllers();
 
 app.Run();
 
-public partial class Program
+namespace Innowise.Clinic.Auth
 {
+    public partial class Program
+    {
+    }
 }
