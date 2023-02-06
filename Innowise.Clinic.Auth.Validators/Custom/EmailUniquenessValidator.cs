@@ -15,12 +15,12 @@ public class EmailUniquenessValidator : IEmailValidator
     
     public bool ValidateEmail(string email)
     {
-        return _dbContext.Users.Any(x => x.Email == email);
+        return !_dbContext.Users.Any(x => x.Email == email);
     }
 
     public async Task<bool> ValidateEmailAsync(string email)
     {
-        return await _dbContext.Users.AnyAsync(x => x.Email == email);
+        return !await _dbContext.Users.AnyAsync(x => x.Email == email);
 
     }
 }

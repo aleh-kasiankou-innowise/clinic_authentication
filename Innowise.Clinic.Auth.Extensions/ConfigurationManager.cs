@@ -4,7 +4,9 @@ using Innowise.Clinic.Auth.Jwt.Interfaces;
 using Innowise.Clinic.Auth.Mail;
 using Innowise.Clinic.Auth.Mail.Interfaces;
 using Innowise.Clinic.Auth.Persistence;
+using Innowise.Clinic.Auth.Validators.Custom;
 using Innowise.Clinic.Auth.Validators.Identity;
+using Innowise.Clinic.Auth.Validators.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -71,6 +73,7 @@ public static class ConfigurationManager
         });
 
         services.AddScoped<ITokenGenerator, TokenGenerator>();
+        services.AddScoped<ITokenRevoker, RefreshTokenRevoker>();
 
         return services;
     }
@@ -94,5 +97,11 @@ public static class ConfigurationManager
                 new string[] { }
             }
         });
+    }
+
+    public static void ConfigureCustomValidators(this IServiceCollection services)
+    {
+        services.AddScoped<ITokenValidator, TokenValidator>();
+        services.AddScoped<IEmailValidator, EmailUniquenessValidator>();
     }
 }
