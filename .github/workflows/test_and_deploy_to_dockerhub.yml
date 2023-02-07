@@ -1,0 +1,51 @@
+name: Test and Deploy Docker Compose to Docker Hub
+
+on:
+  pull_request:
+  push:
+    branches:
+      [ "main", "testing", "devops/gh_actions_deployment_to_dockerhub" ]
+
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  SLN_PATH: "./Innowise.Clinic.Auth.sln"
+  DOCKER_COMPOSE_FILE: "./docker-compose/docker-compose.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+      - name: Restore dependencies
+        run: dotnet restore $SLN_PATH
+      - name: Build
+        run: dotnet build $SLN_PATH --no-restore
+      - name: Test
+        run: dotnet test $SLN_PATH --no-build --verbosity normal
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker images
+        run:
+          |
+          set -e
+          docker-compose -f $DOCKER_COMPOSE_FILE build
+          docker tag docker-compose_auth:latest "$DOCKER_USERNAME/docker-compose_auth:latest"
+          docker push "$DOCKER_USERNAME/docker-compose_auth"
