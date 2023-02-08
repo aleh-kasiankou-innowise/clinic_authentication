@@ -55,14 +55,14 @@ public class UserManagementService : IUserManagementService
         var isSignInSucceeded =
             await _signInManager.UserManager.CheckPasswordAsync(user, patientCredentials.Password);
 
-        if (isSignInSucceeded)
+        if (!isSignInSucceeded)
         {
-            var authTokens = await _tokenGenerator.GenerateJwtAndRefreshTokenAsync(user);
-            return authTokens;
+            await _tokenRevoker.RevokeAllUserTokensAsync(user.Id);
+            throw new InvalidCredentialsProvidedException();
         }
 
-        await _tokenRevoker.RevokeAllUserTokensAsync(user.Id);
-        throw new InvalidTokenException();
+        var authTokens = await _tokenGenerator.GenerateJwtAndRefreshTokenAsync(user);
+        return authTokens;
     }
 
     public async Task LogOutUserAsync(AuthTokenPairDto userTokens)
@@ -79,11 +79,11 @@ public class UserManagementService : IUserManagementService
             var principal = await _tokenValidator.ValidateTokenPairAndExtractPrincipal(userTokens);
             return _tokenGenerator.GenerateJwtToken(principal);
         }
-        catch (SecurityTokenValidationException e)
+        catch (SecurityTokenValidationException)
         {
             var userId = userTokens.GetUserId();
             await _tokenRevoker.RevokeAllUserTokensAsync(userId);
-            throw new InvalidTokenException();
+            throw;
         }
     }
 
@@ -96,7 +96,7 @@ public class UserManagementService : IUserManagementService
 
         var confirmation = await _userManager.ConfirmEmailAsync(user, emailConfirmationToken);
 
-        if (!confirmation.Succeeded) throw new EmailConfirmationFailedException();
+        if (!confirmation.Succeeded) throw new EmailConfirmationFailedException(confirmation.Errors);
     }
 
     private async Task<string> PrepareEmailConfirmationLink(IdentityUser<Guid> user)
@@ -115,7 +115,6 @@ public class UserManagementService : IUserManagementService
     private async Task<IdentityUser<Guid>> RegisterNewPatientAsync(PatientCredentialsDto patientCredentials)
     {
         var registeredUser = await _userManager.FindByEmailAsync(patientCredentials.Email);
-        var modelErrors = new List<IdentityError>();
 
         if (registeredUser != null) throw new UserAlreadyRegisteredException();
 
@@ -134,6 +133,6 @@ public class UserManagementService : IUserManagementService
             return user;
         }
 
-        throw new InvalidCredentialsProvidedException(signUpResult.Errors);
+        throw new CredentialValidationFailedException(signUpResult.Errors);
     }
 }

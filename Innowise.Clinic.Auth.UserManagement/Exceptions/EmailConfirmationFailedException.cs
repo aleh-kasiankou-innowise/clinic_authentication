@@ -1,10 +1,16 @@
+using Innowise.Clinic.Auth.UserManagement.Exceptions.Base;
+using Microsoft.AspNetCore.Identity;
+
 namespace Innowise.Clinic.Auth.UserManagement.Exceptions;
 
-public class EmailConfirmationFailedException : ApplicationException
+public class EmailConfirmationFailedException : AuthenticationModelException
 {
-    private const string DefaultMessage = "The Email confirmation failed. Please try again later.";
+    public const string DefaultMessage = "The Email confirmation failed. Please try again later.";
 
-    public EmailConfirmationFailedException() : base(DefaultMessage)
+    public EmailConfirmationFailedException(IEnumerable<IdentityError> errors) : base(DefaultMessage, StatusCode,
+        errors)
     {
     }
+
+    public new static int StatusCode => 400;
 }

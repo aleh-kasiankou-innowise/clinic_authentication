@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using Innowise.Clinic.Auth.Constants;
 using Innowise.Clinic.Auth.Dto;
+using Innowise.Clinic.Auth.Filters;
 using Innowise.Clinic.Auth.UserManagement.interfaces;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Innowise.Clinic.Auth.Api.Controllers;
@@ -15,17 +15,15 @@ namespace Innowise.Clinic.Auth.Api.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Produces("application/json")]
+[ModelExceptionFilter]
 public class AuthenticationController : ControllerBase
 {
     private readonly IUserManagementService _userManagementService;
-    private readonly UserManager<IdentityUser<Guid>> _userManager;
 
 
     /// <inheritdoc />
-    public AuthenticationController(UserManager<IdentityUser<Guid>> userManager,
-        IUserManagementService userManagementService)
+    public AuthenticationController(IUserManagementService userManagementService)
     {
-        _userManager = userManager;
         _userManagementService = userManagementService;
     }
 
@@ -42,16 +40,6 @@ public class AuthenticationController : ControllerBase
     [ProducesResponseType(typeof(void), 400)]
     public async Task<ActionResult<AuthTokenPairDto>> RegisterPatient(PatientCredentialsDto patientCredentials)
     {
-        // TODO Move ModelState error reporting to exception handling middleware
-
-        /*if (userRegistrationResult.modelErrors.Any())
-        {
-            foreach (var error in userRegistrationResult.modelErrors)
-                ModelState.TryAddModelError(error.Code, error.Description);
-
-            return BadRequest(ModelState);
-        }*/
-
         return Ok(await _userManagementService.RegisterPatientAsync(patientCredentials));
     }
 

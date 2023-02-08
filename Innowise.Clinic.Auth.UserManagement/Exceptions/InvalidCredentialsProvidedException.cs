@@ -1,15 +1,19 @@
-using Microsoft.AspNetCore.Identity;
+using Innowise.Clinic.Auth.UserManagement.Exceptions.Base;
 
 namespace Innowise.Clinic.Auth.UserManagement.Exceptions;
 
-public class InvalidCredentialsProvidedException : ApplicationException
+public class InvalidCredentialsProvidedException : AuthenticationException
 {
-    private const string DefaultMessage = "The provided credentials are not valid";
+    public const string DefaultMessage = "Either an email or a password is incorrect";
 
-    public InvalidCredentialsProvidedException(IEnumerable<IdentityError> modelErrors) : base(DefaultMessage)
+
+    public InvalidCredentialsProvidedException(string message) : base(message, StatusCode)
     {
-        ModelErrors = modelErrors;
     }
 
-    public IEnumerable<IdentityError> ModelErrors { get; }
+    public InvalidCredentialsProvidedException() : base(DefaultMessage, StatusCode)
+    {
+    }
+
+    public new static int StatusCode => 401;
 }

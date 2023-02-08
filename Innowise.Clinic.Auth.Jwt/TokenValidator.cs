@@ -34,13 +34,21 @@ public class TokenValidator : ITokenValidator
 
     private ClaimsPrincipal ExtractPrincipalFromJwtToken(string token, bool tokenShouldBeExpired)
     {
-        var securityToken = new JwtSecurityToken(token);
+        try
+        {
+            var securityToken = new JwtSecurityToken(token);
+            if (tokenShouldBeExpired && securityToken.ValidTo > DateTime.UtcNow)
+                throw new JwtTokenNotExpiredException();
 
-        if (tokenShouldBeExpired && securityToken.ValidTo > DateTime.UtcNow) throw new JwtTokenNotExpiredException();
+            var principal = ValidateTokenAndReturnPrinciple(token, false, out _);
 
-        var principal = ValidateTokenAndReturnPrinciple(token, false, out _);
+            return principal;
+        }
 
-        return principal;
+        catch (ArgumentException e)
+        {
+            throw new InvalidTokenException("The token signature is invalid");
+        }
     }
 
     private async Task ValidateRefreshTokenAsync(string token)

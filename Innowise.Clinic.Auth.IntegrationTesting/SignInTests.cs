@@ -1,7 +1,6 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Innowise.Clinic.Auth.Constants;
 using Innowise.Clinic.Auth.Dto;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -83,7 +82,7 @@ public class SignInTests : IClassFixture<IntegrationTestingWebApplicationFactory
         // Assert
 
         Assert.False(response.IsSuccessStatusCode);
-        Assert.Equal(ApiMessages.FailedLoginMessage, responseMessage);
+        Assert.Equal("Either an email or a password is incorrect", responseMessage);
     }
 
     [Fact]

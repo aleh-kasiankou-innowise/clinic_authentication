@@ -38,7 +38,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Innowise.Clinic.Auth.Constants\Innowise.Clinic.Auth.Constants.csproj"/>
-        <ProjectReference Include="..\Innowise.Clinic.Auth.Persistence.Models\Innowise.Clinic.Auth.Persistence.Models.csproj"/>
     </ItemGroup>
 
 </Project>

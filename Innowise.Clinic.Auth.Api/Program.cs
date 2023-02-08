@@ -3,6 +3,7 @@ using Innowise.Clinic.Auth.DependencyConfiguration;
 using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Jwt;
 using Innowise.Clinic.Auth.Mail;
+using Innowise.Clinic.Auth.Middleware;
 using Innowise.Clinic.Auth.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,9 +31,11 @@ builder.Services.Configure<SmtpData>(builder.Configuration.GetSection("AuthSmtp"
 builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 builder.Services.ConfigureJwtAuthentication(builder.Configuration.GetSection("JWT"));
 builder.Services.ConfigureUserManagementServices();
+builder.Services.AddSingleton<AuthenticationExceptionHandlingMiddleware>();
 
 var app = builder.Build();
 
+app.UseMiddleware<AuthenticationExceptionHandlingMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
 

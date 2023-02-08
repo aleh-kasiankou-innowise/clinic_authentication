@@ -36,7 +36,9 @@
         <ProjectReference Include="..\Innowise.Clinic.Auth.DependencyConfiguration\Innowise.Clinic.Auth.DependencyConfiguration.csproj"/>
         <ProjectReference Include="..\Innowise.Clinic.Auth.Extensions\Innowise.Clinic.Auth.Extensions.csproj"/>
         <ProjectReference Include="..\Innowise.Clinic.Auth.Dto\Innowise.Clinic.Auth.Dto.csproj"/>
+        <ProjectReference Include="..\Innowise.Clinic.Auth.Filters\Innowise.Clinic.Auth.Filters.csproj"/>
         <ProjectReference Include="..\Innowise.Clinic.Auth.Mail\Innowise.Clinic.Auth.Mail.csproj"/>
+        <ProjectReference Include="..\Innowise.Clinic.Auth.Middleware\Innowise.Clinic.Auth.Middleware.csproj"/>
         <ProjectReference Include="..\Innowise.Clinic.Auth.Persistence\Innowise.Clinic.Auth.Persistence.csproj"/>
         <ProjectReference Include="..\Innowise.Clinic.Auth.UserManagement\Innowise.Clinic.Auth.UserManagement.csproj"/>
     </ItemGroup>
