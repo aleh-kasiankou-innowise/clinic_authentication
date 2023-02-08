@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Innowise.Clinic.Auth.Persistence.Models;
 
-public class RefreshToken
+public record RefreshToken
 {
-    public Guid TokenId { get; set; }
-    public Guid UserId { get; set; }
-    public virtual IdentityUser<Guid> User { get; set; }
+    public Guid TokenId { get; init; }
+    public Guid UserId { get; init; }
+    public virtual IdentityUser<Guid> User { get; init; }
 }

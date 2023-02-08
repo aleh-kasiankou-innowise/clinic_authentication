@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using Innowise.Clinic.Auth.Constants;
 using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Filters;
 using Innowise.Clinic.Auth.UserManagement.interfaces;
@@ -35,7 +34,7 @@ public class AuthenticationController : ControllerBase
     /// </returns>
     /// <response code="200">Success. The user has been registered. A pair of tokens is returned</response>
     /// <response code="400"> Fail. Email and/or password haven't passed validation.</response>
-    [HttpPost(EndpointRoutes.SignUpEndpointRoute)]
+    [HttpPost("sign-up/patient")]
     [ProducesResponseType(typeof(AuthTokenPairDto), 200)]
     [ProducesResponseType(typeof(void), 400)]
     public async Task<ActionResult<AuthTokenPairDto>> RegisterPatient(PatientCredentialsDto patientCredentials)
@@ -52,7 +51,7 @@ public class AuthenticationController : ControllerBase
     /// </returns>
     /// <response code="200">Success. The user has been registered. A pair of tokens is returned</response>
     /// <response code="401"> Fail. The account with the provided credentials doesn't exist. </response>
-    [HttpPost(EndpointRoutes.SignInEndpointRoute)]
+    [HttpPost("sign-in/patient")]
     [ProducesResponseType(typeof(AuthTokenPairDto), 200)]
     [ProducesResponseType(typeof(void), 401)]
     public async Task<ActionResult<AuthTokenPairDto>> SignInAsPatient(PatientCredentialsDto patientCredentials)
@@ -67,7 +66,7 @@ public class AuthenticationController : ControllerBase
     /// </returns>
     /// <response code="200">Success. The user is logged out.</response>
     /// <response code="401">Fail. Provided tokens haven't passed validation. It is necessary to sign in again.</response>
-    [HttpPost(EndpointRoutes.SignOutEndpointRoute)]
+    [HttpPost("sign-out")]
     [ProducesResponseType(typeof(void), 200)]
     [ProducesResponseType(typeof(void), 401)]
     public async Task<IActionResult> SignOutAsPatient(AuthTokenPairDto tokens)
@@ -84,7 +83,7 @@ public class AuthenticationController : ControllerBase
     /// </returns>
     /// <response code="200">Success. A new security token is returned.</response>
     /// <response code="401"> Fail. Provided tokens haven't passed validation. It is necessary to sign in again. </response>
-    [HttpPost(EndpointRoutes.RefreshTokenEndpointRoute)]
+    [HttpPost("token/refresh")]
     [ProducesResponseType(typeof(string), 200)]
     [ProducesResponseType(typeof(void), 401)]
     public async Task<ActionResult<string>> RefreshToken([FromBody] AuthTokenPairDto tokens)

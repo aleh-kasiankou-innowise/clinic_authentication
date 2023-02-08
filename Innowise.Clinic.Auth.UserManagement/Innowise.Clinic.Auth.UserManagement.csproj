@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Innowise.Clinic.Auth.Constants\Innowise.Clinic.Auth.Constants.csproj"/>
         <ProjectReference Include="..\Innowise.Clinic.Auth.Dto\Innowise.Clinic.Auth.Dto.csproj"/>
         <ProjectReference Include="..\Innowise.Clinic.Auth.Extensions\Innowise.Clinic.Auth.Extensions.csproj"/>
         <ProjectReference Include="..\Innowise.Clinic.Auth.Jwt\Innowise.Clinic.Auth.Jwt.csproj"/>

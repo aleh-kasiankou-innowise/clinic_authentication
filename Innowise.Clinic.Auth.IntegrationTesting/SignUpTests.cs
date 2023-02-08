@@ -3,8 +3,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Innowise.Clinic.Auth.Constants;
 using Innowise.Clinic.Auth.Dto;
+using Innowise.Clinic.Auth.Persistence.Constants;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 

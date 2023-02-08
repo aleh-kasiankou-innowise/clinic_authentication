@@ -14,5 +14,5 @@ public class InvalidTokenException : AuthenticationException
     {
     }
 
-    public static int StatusCode => 401;
+    public new static int StatusCode => 401;
 }

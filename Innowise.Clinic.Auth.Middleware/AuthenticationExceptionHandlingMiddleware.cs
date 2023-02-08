@@ -36,7 +36,7 @@ public class AuthenticationExceptionHandlingMiddleware : IMiddleware
             await WriteExceptionMessageToResponse(e.Message, context);
         }
 
-        catch (Exception e)
+        catch (Exception)
         {
             context.Response.StatusCode = 500;
 

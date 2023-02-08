@@ -9,4 +9,8 @@ public class TokenLacksUserIdException : SecurityTokenValidationException
     public TokenLacksUserIdException() : base(DefaultMessage)
     {
     }
+
+    public TokenLacksUserIdException(string message) : base(message)
+    {
+    }
 }

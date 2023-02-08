@@ -16,6 +16,7 @@ public class ValidationController : ControllerBase
 
     private readonly IEmailValidator _emailValidator;
 
+    /// <inheritdoc />
     public ValidationController(IEmailValidator emailValidator)
     {
         _emailValidator = emailValidator;
@@ -33,8 +34,10 @@ public class ValidationController : ControllerBase
     [ProducesResponseType(typeof(void), 400)]
     public async Task<IActionResult> CheckEmailUniqueness([FromRoute] string email)
     {
-        var validationSucceeded = await _emailValidator.ValidateEmailAsync(email);
+        var isValidationSucceeded = await _emailValidator.ValidateEmailAsync(email);
 
-        return validationSucceeded ? Ok() : BadRequest(EmailIsRegisteredMessage);
+        return isValidationSucceeded
+            ? Ok()
+            : BadRequest(EmailIsRegisteredMessage);
     }
 }

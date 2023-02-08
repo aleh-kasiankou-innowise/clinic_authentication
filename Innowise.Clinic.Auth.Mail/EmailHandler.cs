@@ -8,18 +8,18 @@ namespace Innowise.Clinic.Auth.Mail;
 
 public class EmailHandler : IEmailHandler
 {
-    private readonly IOptions<SmtpData> _smtpData;
+    private readonly IOptions<SmtpSettings> _smtpSettings;
 
-    public EmailHandler(IOptions<SmtpData> emailData)
+    public EmailHandler(IOptions<SmtpSettings> smtpSettings)
     {
-        _smtpData = emailData;
+        _smtpSettings = smtpSettings;
     }
 
     public async Task SendMessageAsync(string mailRecipientMailAddress, string mailSubject, string mailBody)
     {
         var message = new MimeMessage();
-        message.From.Add(new MailboxAddress(_smtpData.Value.AuthenticationEmailSenderName,
-            _smtpData.Value.AuthenticationEmailSenderAddress));
+        message.From.Add(new MailboxAddress(_smtpSettings.Value.AuthenticationEmailSenderName,
+            _smtpSettings.Value.AuthenticationEmailSenderAddress));
 
         message.To.Add(new MailboxAddress(mailRecipientMailAddress, mailRecipientMailAddress));
         message.Subject = mailSubject;
@@ -31,7 +31,7 @@ public class EmailHandler : IEmailHandler
 
         using (var client = new SmtpClient())
         {
-            await client.ConnectAsync(_smtpData.Value.SmtpServerHost, _smtpData.Value.SmtpServerPort, false);
+            await client.ConnectAsync(_smtpSettings.Value.SmtpServerHost, _smtpSettings.Value.SmtpServerPort, false);
             await client.SendAsync(message);
             await client.DisconnectAsync(true);
         }
@@ -40,6 +40,6 @@ public class EmailHandler : IEmailHandler
     public async Task SendEmailConfirmationLinkAsync(string mailRecipient, string emailConfirmationLink)
     {
         var emailBody = EmailBodyBuilder.BuildBodyForEmailConfirmation(emailConfirmationLink);
-        await SendMessageAsync(mailRecipient, EmailSubjects.EmailConfirmation, emailConfirmationLink);
+        await SendMessageAsync(mailRecipient, EmailSubjects.EmailConfirmation, emailBody);
     }
 }

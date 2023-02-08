@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Innowise.Clinic.Auth.Jwt.Interfaces;
 
-public interface ITokenGenerator
+public interface ITokenService
 {
     Task<AuthTokenPairDto> GenerateJwtAndRefreshTokenAsync(IdentityUser<Guid> user);
     string GenerateJwtToken(ClaimsPrincipal principal);

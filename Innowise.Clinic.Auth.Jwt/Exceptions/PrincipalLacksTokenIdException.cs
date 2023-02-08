@@ -9,4 +9,8 @@ public class PrincipalLacksTokenIdException : SecurityTokenValidationException
     public PrincipalLacksTokenIdException() : base(DefaultMessage)
     {
     }
+
+    public PrincipalLacksTokenIdException(string message) : base(message)
+    {
+    }
 }

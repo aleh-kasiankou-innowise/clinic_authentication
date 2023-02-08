@@ -20,7 +20,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 {
     private readonly IntegrationTestingWebApplicationFactory _factory;
     private readonly HttpClient _httpClient;
-    private readonly IOptions<JwtData> _jwtData;
+    private readonly IOptions<JwtSettings> _jwtData;
 
     public TokenGenerationTests(IntegrationTestingWebApplicationFactory factory)
     {
@@ -30,7 +30,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
             AllowAutoRedirect = false
         });
 
-        _jwtData = _factory.Services.GetService<IOptions<JwtData>>() ?? throw new InvalidOperationException();
+        _jwtData = _factory.Services.GetService<IOptions<JwtSettings>>() ?? throw new InvalidOperationException();
     }
 
 

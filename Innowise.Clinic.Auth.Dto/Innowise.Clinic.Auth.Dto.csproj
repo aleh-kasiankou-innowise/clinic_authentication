@@ -10,6 +10,7 @@
         <Authors>Innowise.Clinic.Auth.Dto</Authors>
         <Company>Innowise.Clinic.Auth.Dto</Company>
         <Product>Innowise.Clinic.Auth.Dto</Product>
+        <NoWarn>1591</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

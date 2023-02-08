@@ -44,7 +44,7 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
         await _mailContainer.StartAsync();
     }
 
-    public async Task DisposeAsync()
+    public new async Task DisposeAsync()
     {
         await _dbContainer.StopAsync();
         await _mailContainer.StopAsync();
@@ -80,7 +80,7 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
                 d => d.ServiceType ==
                      typeof(DbContextOptions<ClinicAuthDbContext>));
 
-            services.Remove(descriptor);
+            if (descriptor != null) services.Remove(descriptor);
 
 
             services.AddDbContext<ClinicAuthDbContext>(options =>
@@ -88,8 +88,8 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
                 options.UseSqlServer(BuildConnectionString(_dbPort));
             });
 
-            services.Configure<JwtData>(x => { x.TokenValidityInSeconds = 5; });
-            services.Configure<SmtpData>(x =>
+            services.Configure<JwtSettings>(x => { x.TokenValidityInSeconds = 5; });
+            services.Configure<SmtpSettings>(x =>
             {
                 x.SmtpServerHost = ContainerHost;
                 x.SmtpServerPort = _smtpPort;

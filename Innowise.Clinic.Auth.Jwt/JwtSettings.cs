@@ -1,9 +1,9 @@
 namespace Innowise.Clinic.Auth.Jwt;
 
-public class JwtData
+public record JwtSettings
 {
-    public string Key { get; set; }
-    public string ValidIssuer { get; set; }
+    public string Key { get; init; }
+    public string ValidIssuer { get; init; }
 
     public int TokenValidityInSeconds { get; set; }
 

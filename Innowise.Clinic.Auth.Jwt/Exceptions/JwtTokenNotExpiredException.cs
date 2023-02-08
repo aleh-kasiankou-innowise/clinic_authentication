@@ -9,4 +9,8 @@ public class JwtTokenNotExpiredException : SecurityTokenValidationException
     public JwtTokenNotExpiredException() : base(DefaultMessage)
     {
     }
+
+    public JwtTokenNotExpiredException(string message) : base(message)
+    {
+    }
 }

@@ -11,7 +11,7 @@ public class ClinicAuthDbContext : IdentityDbContext<IdentityUser<Guid>, Identit
     {
     }
 
-    public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; init; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

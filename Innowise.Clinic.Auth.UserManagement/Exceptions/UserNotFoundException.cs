@@ -14,5 +14,5 @@ public class UserNotFoundException : AuthenticationException
     {
     }
 
-    public static int StatusCode => 400;
+    public new static int StatusCode => 400;
 }

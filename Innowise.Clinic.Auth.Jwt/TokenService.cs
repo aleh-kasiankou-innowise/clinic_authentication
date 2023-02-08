@@ -11,14 +11,14 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Innowise.Clinic.Auth.Jwt;
 
-public class TokenGenerator : ITokenGenerator
+public class TokenService : ITokenService
 {
     private readonly ClinicAuthDbContext _dbContext;
-    private readonly IOptions<JwtData> _jwtOptions;
+    private readonly IOptions<JwtSettings> _jwtOptions;
     private readonly SymmetricSecurityKey _securityKey;
     private readonly UserManager<IdentityUser<Guid>?> _userManager;
 
-    public TokenGenerator(IOptions<JwtData> jwtOptions, ClinicAuthDbContext dbContext,
+    public TokenService(IOptions<JwtSettings> jwtOptions, ClinicAuthDbContext dbContext,
         UserManager<IdentityUser<Guid>?> userManager)
     {
         _jwtOptions = jwtOptions;

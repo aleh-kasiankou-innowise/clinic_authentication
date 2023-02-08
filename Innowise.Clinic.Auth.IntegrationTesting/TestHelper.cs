@@ -8,14 +8,14 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Innowise.Clinic.Auth.IntegrationTesting;
 
-public static class TestHelper
+internal static class TestHelper
 {
     internal const string SignUpEndpointUri = "authentication/sign-up/patient";
     internal const string RefreshTokenEndpointUri = "authentication/token/refresh";
     internal const string SignInEndpointUri = "authentication/sign-in/patient";
     internal const string SignOutEndpointUri = "authentication/sign-out";
 
-    internal static int _uniqueNumber;
+    private static int _uniqueNumber;
 
     internal static int UniqueNumber => _uniqueNumber++;
 

@@ -17,7 +17,7 @@ public class RefreshTokenRevoker : ITokenRevoker
 
     public async Task RevokeTokenAsync(Guid tokenId)
     {
-        var token = await _dbContext.RefreshTokens.SingleOrDefaultAsync(x => x.TokenId == tokenId);
+        var token = await _dbContext.RefreshTokens.FirstOrDefaultAsync(x => x.TokenId == tokenId);
         if (token == null) throw new UnknownRefreshTokenException();
 
         _dbContext.RefreshTokens.Remove(token);
@@ -26,7 +26,7 @@ public class RefreshTokenRevoker : ITokenRevoker
 
     public void RevokeToken(Guid tokenId)
     {
-        var token = _dbContext.RefreshTokens.SingleOrDefault(x => x.TokenId == tokenId);
+        var token = _dbContext.RefreshTokens.FirstOrDefault(x => x.TokenId == tokenId);
         if (token == null) throw new UnknownRefreshTokenException();
 
         _dbContext.RefreshTokens.Remove(token);

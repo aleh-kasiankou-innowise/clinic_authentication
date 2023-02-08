@@ -75,7 +75,7 @@ public static class ConfigurationManager
             };
         });
 
-        services.AddScoped<ITokenGenerator, TokenGenerator>();
+        services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ITokenRevoker, RefreshTokenRevoker>();
 
         return services;
@@ -102,9 +102,11 @@ public static class ConfigurationManager
         });
     }
 
-    public static void ConfigureCustomValidators(this IServiceCollection services)
+    public static IServiceCollection ConfigureCustomValidators(this IServiceCollection services)
     {
         services.AddScoped<ITokenValidator, TokenValidator>();
         services.AddScoped<IEmailValidator, EmailUniquenessValidator>();
+
+        return services;
     }
 }

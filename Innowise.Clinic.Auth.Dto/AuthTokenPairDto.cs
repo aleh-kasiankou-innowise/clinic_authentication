@@ -6,16 +6,11 @@ namespace Innowise.Clinic.Auth.Dto;
 /// </summary>
 public class AuthTokenPairDto
 {
-#pragma warning disable CS1591
     public AuthTokenPairDto(string securityToken, string refreshToken)
-#pragma warning restore CS1591
+
     {
         SecurityToken = securityToken;
         RefreshToken = refreshToken;
-    }
-
-    private AuthTokenPairDto()
-    {
     }
 
     /// <summary>
@@ -32,7 +27,7 @@ public class AuthTokenPairDto
     ///     dHRwOi8vbG9jYWxob3N0OjI1NTcwIn0.acLuMB4OHsW4at
     ///     8Y9hmXNwopYDxbcZ8TSiAvWVgf7L8
     /// </example>
-    public string SecurityToken { get; set; }
+    public string SecurityToken { get; }
 
     /// <summary>
     ///     Long-living token for refreshing security tokens and logging out
@@ -48,5 +43,5 @@ public class AuthTokenPairDto
     ///     cvg9O8AhF7yHWcONuUBaGn6vGsys73dqz1jj8s
     /// </example>
     /// >
-    public string RefreshToken { get; set; }
+    public string RefreshToken { get; }
 }

@@ -1,4 +1,4 @@
-﻿namespace Innowise.Clinic.Auth.Constants;
+﻿namespace Innowise.Clinic.Auth.Persistence.Constants;
 
 public static class UserRoles
 {

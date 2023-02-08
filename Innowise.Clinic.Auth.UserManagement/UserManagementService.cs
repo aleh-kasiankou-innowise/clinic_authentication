@@ -1,9 +1,9 @@
 ﻿using System.Text;
-using Innowise.Clinic.Auth.Constants;
 using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Extensions;
 using Innowise.Clinic.Auth.Jwt.Interfaces;
 using Innowise.Clinic.Auth.Mail.Interfaces;
+using Innowise.Clinic.Auth.Persistence.Constants;
 using Innowise.Clinic.Auth.UserManagement.Exceptions;
 using Innowise.Clinic.Auth.UserManagement.interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -16,13 +16,13 @@ public class UserManagementService : IUserManagementService
 {
     private readonly IEmailHandler _emailHandler;
     private readonly SignInManager<IdentityUser<Guid>> _signInManager;
-    private readonly ITokenGenerator _tokenGenerator;
+    private readonly ITokenService _tokenGenerator;
     private readonly ITokenRevoker _tokenRevoker;
     private readonly ITokenValidator _tokenValidator;
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
     public UserManagementService(UserManager<IdentityUser<Guid>> userManager, IEmailHandler emailHandler,
-        ITokenGenerator tokenGenerator, SignInManager<IdentityUser<Guid>> signInManager, ITokenRevoker tokenRevoker,
+        ITokenService tokenGenerator, SignInManager<IdentityUser<Guid>> signInManager, ITokenRevoker tokenRevoker,
         ITokenValidator tokenValidator)
     {
         _userManager = userManager;

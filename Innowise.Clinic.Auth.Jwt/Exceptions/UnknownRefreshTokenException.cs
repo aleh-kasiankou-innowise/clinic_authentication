@@ -9,4 +9,8 @@ public class UnknownRefreshTokenException : SecurityTokenValidationException
     public UnknownRefreshTokenException() : base(DefaultMessage)
     {
     }
+
+    public UnknownRefreshTokenException(string message) : base(message)
+    {
+    }
 }

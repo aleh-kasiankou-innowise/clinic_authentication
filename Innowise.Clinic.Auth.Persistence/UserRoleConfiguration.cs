@@ -1,4 +1,4 @@
-using Innowise.Clinic.Auth.Constants;
+using Innowise.Clinic.Auth.Persistence.Constants;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

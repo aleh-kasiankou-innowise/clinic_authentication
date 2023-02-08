@@ -26,8 +26,8 @@ builder.Services.AddDbContext<ClinicAuthDbContext>(
 builder.Services.AddAuthentication();
 builder.Services.ConfigureCustomValidators();
 builder.Services.ConfigureIdentity();
-builder.Services.Configure<JwtData>(builder.Configuration.GetSection("JWT"));
-builder.Services.Configure<SmtpData>(builder.Configuration.GetSection("AuthSmtp"));
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JWT"));
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("AuthSmtp"));
 builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 builder.Services.ConfigureJwtAuthentication(builder.Configuration.GetSection("JWT"));
 builder.Services.ConfigureUserManagementServices();

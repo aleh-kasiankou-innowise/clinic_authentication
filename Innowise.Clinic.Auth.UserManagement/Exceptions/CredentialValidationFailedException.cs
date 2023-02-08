@@ -12,5 +12,5 @@ public class CredentialValidationFailedException : AuthenticationModelException
     {
     }
 
-    public static int StatusCode => 400;
+    public new static int StatusCode => 400;
 }
