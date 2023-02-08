@@ -17,7 +17,7 @@ public class SignInTests : IClassFixture<IntegrationTestingWebApplicationFactory
     public SignInTests(IntegrationTestingWebApplicationFactory factory)
     {
         _factory = factory;
-        _httpClient = factory.CreateClient(new WebApplicationFactoryClientOptions()
+        _httpClient = factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false
         });
@@ -28,7 +28,7 @@ public class SignInTests : IClassFixture<IntegrationTestingWebApplicationFactory
     {
         // Arrange
 
-        var validUserRegistrationData = new PatientCredentialsDto()
+        var validUserRegistrationData = new PatientCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.com",
             Password = "12345678"
@@ -61,7 +61,7 @@ public class SignInTests : IClassFixture<IntegrationTestingWebApplicationFactory
     {
         // Arrange
 
-        var validUserRegistrationData = new PatientCredentialsDto()
+        var validUserRegistrationData = new PatientCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.com",
             Password = "12345678"
@@ -69,7 +69,7 @@ public class SignInTests : IClassFixture<IntegrationTestingWebApplicationFactory
 
         await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, validUserRegistrationData);
 
-        var invalidUserCredentials = new PatientCredentialsDto()
+        var invalidUserCredentials = new PatientCredentialsDto
         {
             Email = validUserRegistrationData.Email,
             Password = "87654321"
@@ -91,7 +91,7 @@ public class SignInTests : IClassFixture<IntegrationTestingWebApplicationFactory
     {
         // Arrange
 
-        var unregisteredUserCredentials = new PatientCredentialsDto()
+        var unregisteredUserCredentials = new PatientCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.com",
             Password = "12345678"

@@ -23,7 +23,7 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<IdentityRole<Guid>
                 Name = UserRoles.Receptionist,
                 NormalizedName = UserRoles.Receptionist.ToUpper()
             },
-            new IdentityRole<Guid>()
+            new IdentityRole<Guid>
             {
                 Id = Guid.Parse("c1460814-4592-4cd9-944e-691db26b315e"),
                 Name = UserRoles.Doctor,

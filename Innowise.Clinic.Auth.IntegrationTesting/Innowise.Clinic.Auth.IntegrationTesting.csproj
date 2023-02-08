@@ -8,10 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.13" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
-        <PackageReference Include="Testcontainers" Version="2.3.0" />
-        <PackageReference Include="xunit" Version="2.4.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.13"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0"/>
+        <PackageReference Include="Testcontainers" Version="2.3.0"/>
+        <PackageReference Include="xunit" Version="2.4.1"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
@@ -23,9 +23,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Innowise.Clinic.Auth.Dto\Innowise.Clinic.Auth.Dto.csproj" />
-      <ProjectReference Include="..\Innowise.Clinic.Auth.Persistence\Innowise.Clinic.Auth.Persistence.csproj" />
-      <ProjectReference Include="..\Innowise.Clinic.Auth.Api\Innowise.Clinic.Auth.Api.csproj" />
+        <ProjectReference Include="..\Innowise.Clinic.Auth.Dto\Innowise.Clinic.Auth.Dto.csproj"/>
+        <ProjectReference Include="..\Innowise.Clinic.Auth.Persistence\Innowise.Clinic.Auth.Persistence.csproj"/>
+        <ProjectReference Include="..\Innowise.Clinic.Auth.Api\Innowise.Clinic.Auth.Api.csproj"/>
     </ItemGroup>
 
 </Project>

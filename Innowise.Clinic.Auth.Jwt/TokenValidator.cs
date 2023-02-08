@@ -36,10 +36,7 @@ public class TokenValidator : ITokenValidator
     {
         var securityToken = new JwtSecurityToken(token);
 
-        if (tokenShouldBeExpired && securityToken.ValidTo > DateTime.UtcNow)
-        {
-            throw new JwtTokenNotExpiredException();
-        }
+        if (tokenShouldBeExpired && securityToken.ValidTo > DateTime.UtcNow) throw new JwtTokenNotExpiredException();
 
         var principal = ValidateTokenAndReturnPrinciple(token, false, out _);
 
@@ -53,25 +50,16 @@ public class TokenValidator : ITokenValidator
         var extractedTokenId = principal.FindFirstValue("jti");
         var associatedUserId = principal.FindFirstValue(ClaimTypes.PrimarySid);
 
-        if (extractedTokenId == null)
-        {
-            throw new TokenLacksTokenIdException();
-        }
+        if (extractedTokenId == null) throw new TokenLacksTokenIdException();
 
-        if (associatedUserId == null)
-        {
-            throw new TokenLacksUserIdException();
-        }
+        if (associatedUserId == null) throw new TokenLacksUserIdException();
 
         var tokenIsRegisteredInDb = await _dbContext.RefreshTokens.AnyAsync(x =>
             x.TokenId == Guid.Parse(extractedTokenId) &&
             x.UserId == Guid.Parse(associatedUserId));
 
 
-        if (!tokenIsRegisteredInDb)
-        {
-            throw new UnknownRefreshTokenException();
-        }
+        if (!tokenIsRegisteredInDb) throw new UnknownRefreshTokenException();
     }
 
     private ClaimsPrincipal ValidateTokenAndReturnPrinciple(string token, bool validateExpirationDate,

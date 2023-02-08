@@ -19,7 +19,7 @@ public class SignUpTests : IClassFixture<IntegrationTestingWebApplicationFactory
     public SignUpTests(IntegrationTestingWebApplicationFactory factory)
     {
         _factory = factory;
-        _httpClient = factory.CreateClient(new WebApplicationFactoryClientOptions()
+        _httpClient = factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false
         });
@@ -32,7 +32,7 @@ public class SignUpTests : IClassFixture<IntegrationTestingWebApplicationFactory
     {
         // Arrange
 
-        var validUserRegistrationData = new PatientCredentialsDto()
+        var validUserRegistrationData = new PatientCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.com",
             Password = "12345678"
@@ -59,7 +59,7 @@ public class SignUpTests : IClassFixture<IntegrationTestingWebApplicationFactory
     {
         // Arrange
 
-        var userRegistrationDataWithInvalidMail = new PatientCredentialsDto()
+        var userRegistrationDataWithInvalidMail = new PatientCredentialsDto
         {
             Email = "testInvalidEmail",
             Password = "12345678"
@@ -82,7 +82,7 @@ public class SignUpTests : IClassFixture<IntegrationTestingWebApplicationFactory
     {
         // Arrange
 
-        var userRegistrationDataWithShortPassword = new PatientCredentialsDto()
+        var userRegistrationDataWithShortPassword = new PatientCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.gmail.com",
             Password = "12345"
@@ -105,7 +105,7 @@ public class SignUpTests : IClassFixture<IntegrationTestingWebApplicationFactory
     {
         // Arrange
 
-        var userRegistrationDataWithLongPassword = new PatientCredentialsDto()
+        var userRegistrationDataWithLongPassword = new PatientCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.gmail.com",
             Password = "12345678911131517"
@@ -131,7 +131,7 @@ public class SignUpTests : IClassFixture<IntegrationTestingWebApplicationFactory
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto()
+        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"

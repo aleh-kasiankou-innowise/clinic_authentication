@@ -4,6 +4,5 @@ public abstract class TokenValidationException : ApplicationException
 {
     public TokenValidationException(string message) : base(message)
     {
-        
     }
 }

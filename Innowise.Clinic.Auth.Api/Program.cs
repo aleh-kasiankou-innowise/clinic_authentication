@@ -1,6 +1,6 @@
 using System.Reflection;
+using Innowise.Clinic.Auth.DependencyConfiguration;
 using Innowise.Clinic.Auth.Dto;
-using Innowise.Clinic.Auth.Extensions;
 using Innowise.Clinic.Auth.Jwt;
 using Innowise.Clinic.Auth.Mail;
 using Innowise.Clinic.Auth.Persistence;
@@ -27,8 +27,9 @@ builder.Services.ConfigureCustomValidators();
 builder.Services.ConfigureIdentity();
 builder.Services.Configure<JwtData>(builder.Configuration.GetSection("JWT"));
 builder.Services.Configure<SmtpData>(builder.Configuration.GetSection("AuthSmtp"));
+builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 builder.Services.ConfigureJwtAuthentication(builder.Configuration.GetSection("JWT"));
-builder.Services.ConfigureEmailServices();
+builder.Services.ConfigureUserManagementServices();
 
 var app = builder.Build();
 
@@ -40,10 +41,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
 
     var context = services.GetRequiredService<ClinicAuthDbContext>();
-    if (context.Database.GetPendingMigrations().Any())
-    {
-        context.Database.Migrate();
-    }
+    if (context.Database.GetPendingMigrations().Any()) context.Database.Migrate();
 }
 
 app.UseHttpsRedirection();
@@ -58,7 +56,7 @@ app.Run();
 
 namespace Innowise.Clinic.Auth.Api
 {
-    public partial class Program
+    public class Program
     {
     }
 }

@@ -20,6 +20,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.Integr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.Mail", "Innowise.Clinic.Auth.Mail\Innowise.Clinic.Auth.Mail.csproj", "{50292CFD-D715-40E6-923D-1EBC34593E53}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.UserManagement", "Innowise.Clinic.Auth.UserManagement\Innowise.Clinic.Auth.UserManagement.csproj", "{C5288B43-FFE0-454E-93A1-52AE77CD97B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innowise.Clinic.Auth.DependencyConfiguration", "Innowise.Clinic.Auth.DependencyConfiguration\Innowise.Clinic.Auth.DependencyConfiguration.csproj", "{0A592A38-4490-4A57-8E32-BCC64A6A878A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,5 +70,13 @@ Global
 		{50292CFD-D715-40E6-923D-1EBC34593E53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50292CFD-D715-40E6-923D-1EBC34593E53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50292CFD-D715-40E6-923D-1EBC34593E53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5288B43-FFE0-454E-93A1-52AE77CD97B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5288B43-FFE0-454E-93A1-52AE77CD97B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5288B43-FFE0-454E-93A1-52AE77CD97B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5288B43-FFE0-454E-93A1-52AE77CD97B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A592A38-4490-4A57-8E32-BCC64A6A878A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A592A38-4490-4A57-8E32-BCC64A6A878A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A592A38-4490-4A57-8E32-BCC64A6A878A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A592A38-4490-4A57-8E32-BCC64A6A878A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

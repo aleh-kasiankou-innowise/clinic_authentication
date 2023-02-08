@@ -9,7 +9,7 @@ public interface ITokenRevoker
     Task RevokeAllUserTokensAsync(Guid userId);
 
     void RevokeAllUserTokens(Guid userId);
-    
+
     Task RevokeAllRefreshTokensAsync();
 
     void RevokeAllRefreshTokens();
