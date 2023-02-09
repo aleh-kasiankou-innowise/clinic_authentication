@@ -54,7 +54,7 @@ public static class ConfigurationManager
     }
 
     public static IServiceCollection ConfigureJwtAuthentication(this IServiceCollection services,
-        IConfigurationSection jwtData)
+        IConfigurationSection jwtConfiguration, IConfigurationSection jwtValidationConfiguration)
     {
         services.AddAuthentication(options =>
         {
@@ -66,12 +66,13 @@ public static class ConfigurationManager
             options.RequireHttpsMetadata = false;
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = true,
-                ValidIssuer = jwtData["ValidIssuer"],
-                ValidateAudience = false,
-                ValidateIssuerSigningKey = true,
+                ValidateIssuer = Convert.ToBoolean(jwtValidationConfiguration["ValidateIssuer"]),
+                ValidIssuer = jwtConfiguration["ValidIssuer"],
+                ValidateAudience = Convert.ToBoolean(jwtValidationConfiguration["ValidateAudience"]),
+                ValidAudience = jwtConfiguration["ValidAudience"],
+                ValidateIssuerSigningKey = Convert.ToBoolean(jwtValidationConfiguration["ValidateIssuerSigningKey"]),
                 IssuerSigningKey =
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtData["Key"]))
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration["Key"]))
             };
         });
 

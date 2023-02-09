@@ -24,14 +24,20 @@ internal static class TestHelper
     {
         var jwtTokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,
+            ValidateIssuer =
+                Convert.ToBoolean(factory.UseConfiguration(x =>
+                    x.GetValue<string>("JwtValidationConfiguration:ValidateIssuer"))),
             ValidIssuer = factory.UseConfiguration(x => x.GetValue<string>("JWT:ValidIssuer")),
-            ValidateIssuerSigningKey = true,
-            ValidateAudience = false,
+            ValidateIssuerSigningKey = Convert.ToBoolean(factory.UseConfiguration(x =>
+                x.GetValue<string>("JwtValidationConfiguration:ValidateIssuerSigningKey"))),
+            ValidateAudience = Convert.ToBoolean(factory.UseConfiguration(x =>
+                x.GetValue<string>("JwtValidationConfiguration:ValidateAudience"))),
+            ValidAudience = factory.UseConfiguration(x => x.GetValue<string>("JWT:ValidAudience")),
             IssuerSigningKey =
                 new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(factory.UseConfiguration(x => x.GetValue<string>("JWT:Key")))),
-            ValidateLifetime = true
+            ValidateLifetime = Convert.ToBoolean(factory.UseConfiguration(x =>
+                x.GetValue<string>("JwtValidationConfiguration:ValidateLifetime")))
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();

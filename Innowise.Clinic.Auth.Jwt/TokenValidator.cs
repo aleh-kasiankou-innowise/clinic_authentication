@@ -15,11 +15,14 @@ public class TokenValidator : ITokenValidator
 {
     private readonly ClinicAuthDbContext _dbContext;
     private readonly IOptions<JwtSettings> _jwtConfiguration;
+    private readonly IOptions<JwtValidationSettings> _jwtValidationConfiguration;
 
-    public TokenValidator(ClinicAuthDbContext dbContext, IOptions<JwtSettings> jwtConfiguration)
+    public TokenValidator(ClinicAuthDbContext dbContext, IOptions<JwtSettings> jwtConfiguration,
+        IOptions<JwtValidationSettings> jwtValidationConfiguration)
     {
         _dbContext = dbContext;
         _jwtConfiguration = jwtConfiguration;
+        _jwtValidationConfiguration = jwtValidationConfiguration;
     }
 
     public async Task<ClaimsPrincipal> ValidateTokenPairAndExtractPrincipal(AuthTokenPairDto authTokens,
@@ -74,10 +77,11 @@ public class TokenValidator : ITokenValidator
     {
         var jwtTokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,
+            ValidateIssuer = _jwtValidationConfiguration.Value.ValidateIssuer,
             ValidIssuer = _jwtConfiguration.Value.ValidIssuer,
-            ValidateIssuerSigningKey = true,
-            ValidateAudience = false,
+            ValidateIssuerSigningKey = _jwtValidationConfiguration.Value.ValidateIssuerSigningKey,
+            ValidateAudience = _jwtValidationConfiguration.Value.ValidateAudience,
+            ValidAudience = _jwtConfiguration.Value.ValidAudience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfiguration.Value.Key)),
             ValidateLifetime = validateExpirationDate
         };

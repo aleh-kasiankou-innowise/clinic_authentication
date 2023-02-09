@@ -28,8 +28,10 @@ builder.Services.ConfigureCustomValidators();
 builder.Services.ConfigureIdentity();
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JWT"));
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("AuthSmtp"));
+builder.Services.Configure<JwtValidationSettings>(builder.Configuration.GetSection("JwtValidationConfiguration"));
 builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
-builder.Services.ConfigureJwtAuthentication(builder.Configuration.GetSection("JWT"));
+builder.Services.ConfigureJwtAuthentication(builder.Configuration.GetSection("JWT"),
+    builder.Configuration.GetSection("JWT"));
 builder.Services.ConfigureUserManagementServices();
 builder.Services.AddSingleton<AuthenticationExceptionHandlingMiddleware>();
 
