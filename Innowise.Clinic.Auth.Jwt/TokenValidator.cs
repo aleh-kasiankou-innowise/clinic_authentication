@@ -14,12 +14,15 @@ namespace Innowise.Clinic.Auth.Jwt;
 public class TokenValidator : ITokenValidator
 {
     private readonly ClinicAuthDbContext _dbContext;
-    private readonly IOptions<JwtData> _jwtConfiguration;
+    private readonly IOptions<JwtSettings> _jwtConfiguration;
+    private readonly IOptions<JwtValidationSettings> _jwtValidationConfiguration;
 
-    public TokenValidator(ClinicAuthDbContext dbContext, IOptions<JwtData> jwtConfiguration)
+    public TokenValidator(ClinicAuthDbContext dbContext, IOptions<JwtSettings> jwtConfiguration,
+        IOptions<JwtValidationSettings> jwtValidationConfiguration)
     {
         _dbContext = dbContext;
         _jwtConfiguration = jwtConfiguration;
+        _jwtValidationConfiguration = jwtValidationConfiguration;
     }
 
     public async Task<ClaimsPrincipal> ValidateTokenPairAndExtractPrincipal(AuthTokenPairDto authTokens,
@@ -34,55 +37,51 @@ public class TokenValidator : ITokenValidator
 
     private ClaimsPrincipal ExtractPrincipalFromJwtToken(string token, bool tokenShouldBeExpired)
     {
-        var securityToken = new JwtSecurityToken(token);
-
-        if (tokenShouldBeExpired && securityToken.ValidTo > DateTime.UtcNow)
+        try
         {
-            throw new JwtTokenNotExpiredException();
+            var securityToken = new JwtSecurityToken(token);
+            if (tokenShouldBeExpired && securityToken.ValidTo > DateTime.UtcNow)
+                throw new JwtTokenNotExpiredException();
+
+            var principal = ValidateTokenAndReturnPrinciple(token, false);
+
+            return principal;
         }
 
-        var principal = ValidateTokenAndReturnPrinciple(token, false, out _);
-
-        return principal;
+        catch (ArgumentException)
+        {
+            throw new InvalidTokenException("The token signature is invalid");
+        }
     }
 
     private async Task ValidateRefreshTokenAsync(string token)
     {
-        var principal = ValidateTokenAndReturnPrinciple(token, true, out var validatedToken);
+        var principal = ValidateTokenAndReturnPrinciple(token, true);
 
         var extractedTokenId = principal.FindFirstValue("jti");
         var associatedUserId = principal.FindFirstValue(ClaimTypes.PrimarySid);
 
-        if (extractedTokenId == null)
-        {
-            throw new TokenLacksTokenIdException();
-        }
+        if (extractedTokenId == null) throw new TokenLacksTokenIdException();
 
-        if (associatedUserId == null)
-        {
-            throw new TokenLacksUserIdException();
-        }
+        if (associatedUserId == null) throw new TokenLacksUserIdException();
 
         var tokenIsRegisteredInDb = await _dbContext.RefreshTokens.AnyAsync(x =>
             x.TokenId == Guid.Parse(extractedTokenId) &&
             x.UserId == Guid.Parse(associatedUserId));
 
 
-        if (!tokenIsRegisteredInDb)
-        {
-            throw new UnknownRefreshTokenException();
-        }
+        if (!tokenIsRegisteredInDb) throw new UnknownRefreshTokenException();
     }
 
-    private ClaimsPrincipal ValidateTokenAndReturnPrinciple(string token, bool validateExpirationDate,
-        out SecurityToken validatedToken)
+    private ClaimsPrincipal ValidateTokenAndReturnPrinciple(string token, bool validateExpirationDate)
     {
         var jwtTokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,
+            ValidateIssuer = _jwtValidationConfiguration.Value.ValidateIssuer,
             ValidIssuer = _jwtConfiguration.Value.ValidIssuer,
-            ValidateIssuerSigningKey = true,
-            ValidateAudience = false,
+            ValidateIssuerSigningKey = _jwtValidationConfiguration.Value.ValidateIssuerSigningKey,
+            ValidateAudience = _jwtValidationConfiguration.Value.ValidateAudience,
+            ValidAudience = _jwtConfiguration.Value.ValidAudience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfiguration.Value.Key)),
             ValidateLifetime = validateExpirationDate
         };
@@ -90,7 +89,7 @@ public class TokenValidator : ITokenValidator
         var tokenHandler = new JwtSecurityTokenHandler();
 
         var principal = tokenHandler.ValidateToken(token, jwtTokenValidationParameters,
-            out validatedToken);
+            out _);
 
         return principal;
     }

@@ -11,13 +11,11 @@ public class MaximalPasswordLengthValidator<TUser> : IPasswordValidator<TUser>
     public async Task<IdentityResult> ValidateAsync(UserManager<TUser> manager, TUser user, string password)
     {
         if (password.Length > MaximalPasswordLength)
-        {
             return await Task.FromResult(IdentityResult.Failed(new IdentityError
             {
                 Code = "PasswordLength",
                 Description = "The password should contain 6 to 15 symbols"
             }));
-        }
 
         return await Task.FromResult(IdentityResult.Success);
     }

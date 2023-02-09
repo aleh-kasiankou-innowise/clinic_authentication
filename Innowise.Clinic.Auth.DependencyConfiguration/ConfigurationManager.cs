@@ -4,6 +4,8 @@ using Innowise.Clinic.Auth.Jwt.Interfaces;
 using Innowise.Clinic.Auth.Mail;
 using Innowise.Clinic.Auth.Mail.Interfaces;
 using Innowise.Clinic.Auth.Persistence;
+using Innowise.Clinic.Auth.UserManagement;
+using Innowise.Clinic.Auth.UserManagement.interfaces;
 using Innowise.Clinic.Auth.Validators.Custom;
 using Innowise.Clinic.Auth.Validators.Identity;
 using Innowise.Clinic.Auth.Validators.Interfaces;
@@ -15,7 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Innowise.Clinic.Auth.Extensions;
+namespace Innowise.Clinic.Auth.DependencyConfiguration;
 
 public static class ConfigurationManager
 {
@@ -44,14 +46,15 @@ public static class ConfigurationManager
         return builder;
     }
 
-    public static IServiceCollection ConfigureEmailServices(this IServiceCollection services)
+    public static IServiceCollection ConfigureUserManagementServices(this IServiceCollection services)
     {
-        services.AddScoped<IEmailHandler, EmailSender>();
+        services.AddScoped<IEmailHandler, EmailHandler>();
+        services.AddScoped<IUserManagementService, UserManagementService>();
         return services;
     }
 
     public static IServiceCollection ConfigureJwtAuthentication(this IServiceCollection services,
-        IConfigurationSection jwtData)
+        IConfigurationSection jwtConfiguration, IConfigurationSection jwtValidationConfiguration)
     {
         services.AddAuthentication(options =>
         {
@@ -61,18 +64,19 @@ public static class ConfigurationManager
         {
             options.SaveToken = true;
             options.RequireHttpsMetadata = false;
-            options.TokenValidationParameters = new TokenValidationParameters()
+            options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = true,
-                ValidIssuer = jwtData["ValidIssuer"],
-                ValidateAudience = false,
-                ValidateIssuerSigningKey = true,
+                ValidateIssuer = Convert.ToBoolean(jwtValidationConfiguration["ValidateIssuer"]),
+                ValidIssuer = jwtConfiguration["ValidIssuer"],
+                ValidateAudience = Convert.ToBoolean(jwtValidationConfiguration["ValidateAudience"]),
+                ValidAudience = jwtConfiguration["ValidAudience"],
+                ValidateIssuerSigningKey = Convert.ToBoolean(jwtValidationConfiguration["ValidateIssuerSigningKey"]),
                 IssuerSigningKey =
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtData["Key"]))
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration["Key"]))
             };
         });
 
-        services.AddScoped<ITokenGenerator, TokenGenerator>();
+        services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ITokenRevoker, RefreshTokenRevoker>();
 
         return services;
@@ -99,9 +103,11 @@ public static class ConfigurationManager
         });
     }
 
-    public static void ConfigureCustomValidators(this IServiceCollection services)
+    public static IServiceCollection ConfigureCustomValidators(this IServiceCollection services)
     {
         services.AddScoped<ITokenValidator, TokenValidator>();
         services.AddScoped<IEmailValidator, EmailUniquenessValidator>();
+
+        return services;
     }
 }

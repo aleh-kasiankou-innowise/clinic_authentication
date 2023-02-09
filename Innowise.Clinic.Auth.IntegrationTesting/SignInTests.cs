@@ -1,7 +1,6 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Innowise.Clinic.Auth.Constants;
 using Innowise.Clinic.Auth.Dto;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +16,7 @@ public class SignInTests : IClassFixture<IntegrationTestingWebApplicationFactory
     public SignInTests(IntegrationTestingWebApplicationFactory factory)
     {
         _factory = factory;
-        _httpClient = factory.CreateClient(new WebApplicationFactoryClientOptions()
+        _httpClient = factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false
         });
@@ -28,7 +27,7 @@ public class SignInTests : IClassFixture<IntegrationTestingWebApplicationFactory
     {
         // Arrange
 
-        var validUserRegistrationData = new PatientCredentialsDto()
+        var validUserRegistrationData = new PatientCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.com",
             Password = "12345678"
@@ -61,7 +60,7 @@ public class SignInTests : IClassFixture<IntegrationTestingWebApplicationFactory
     {
         // Arrange
 
-        var validUserRegistrationData = new PatientCredentialsDto()
+        var validUserRegistrationData = new PatientCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.com",
             Password = "12345678"
@@ -69,7 +68,7 @@ public class SignInTests : IClassFixture<IntegrationTestingWebApplicationFactory
 
         await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, validUserRegistrationData);
 
-        var invalidUserCredentials = new PatientCredentialsDto()
+        var invalidUserCredentials = new PatientCredentialsDto
         {
             Email = validUserRegistrationData.Email,
             Password = "87654321"
@@ -83,7 +82,7 @@ public class SignInTests : IClassFixture<IntegrationTestingWebApplicationFactory
         // Assert
 
         Assert.False(response.IsSuccessStatusCode);
-        Assert.Equal(ApiMessages.FailedLoginMessage, responseMessage);
+        Assert.Equal("Either an email or a password is incorrect", responseMessage);
     }
 
     [Fact]
@@ -91,7 +90,7 @@ public class SignInTests : IClassFixture<IntegrationTestingWebApplicationFactory
     {
         // Arrange
 
-        var unregisteredUserCredentials = new PatientCredentialsDto()
+        var unregisteredUserCredentials = new PatientCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.com",
             Password = "12345678"

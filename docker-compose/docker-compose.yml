@@ -5,14 +5,14 @@ services:
   auth:
     container_name: auth
     hostname: auth
-    depends_on: [auth-db,]
+    depends_on: [ auth-db, ]
     
     build:
       context: ../
       dockerfile: ./Innowise.Clinic.Auth.Api/Dockerfile
     environment:
       - AuthApiUrl=http://localhost:25570/
-      
+    
     ports:
       - "127.0.0.1:25570:80"
       - "127.0.0.1:25575:443"
@@ -38,7 +38,7 @@ services:
       - default
     dns:
       - 172.20.0.104
-        
+  
   smtp:
     image: rnwood/smtp4dev:v3
     restart: always

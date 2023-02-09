@@ -3,7 +3,7 @@ using Innowise.Clinic.Auth.Mail.Constants;
 
 namespace Innowise.Clinic.Auth.Mail;
 
-public static class EmailBodyBuilder 
+public static class EmailBodyBuilder
 {
     public static string BuildBodyForEmailConfirmation(string emailConfirmationLink)
     {

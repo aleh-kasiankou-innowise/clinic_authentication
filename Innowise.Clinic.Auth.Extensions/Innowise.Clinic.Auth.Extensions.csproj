@@ -20,17 +20,17 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Innowise.Clinic.Auth.Jwt\Innowise.Clinic.Auth.Jwt.csproj" />
-        <ProjectReference Include="..\Innowise.Clinic.Auth.Mail\Innowise.Clinic.Auth.Mail.csproj" />
-        <ProjectReference Include="..\Innowise.Clinic.Auth.Persistence\Innowise.Clinic.Auth.Persistence.csproj" />
-        <ProjectReference Include="..\Innowise.Clinic.Auth.Validators\Innowise.Clinic.Auth.Validators.csproj" />
+        <ProjectReference Include="..\Innowise.Clinic.Auth.Jwt\Innowise.Clinic.Auth.Jwt.csproj"/>
+        <ProjectReference Include="..\Innowise.Clinic.Auth.Mail\Innowise.Clinic.Auth.Mail.csproj"/>
+        <ProjectReference Include="..\Innowise.Clinic.Auth.Persistence\Innowise.Clinic.Auth.Persistence.csproj"/>
+        <ProjectReference Include="..\Innowise.Clinic.Auth.Validators\Innowise.Clinic.Auth.Validators.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.13" />
-      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.13" />
-      <PackageReference Include="Microsoft.OpenApi" Version="1.5.0" />
-      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.13"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.13"/>
+        <PackageReference Include="Microsoft.OpenApi" Version="1.5.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0"/>
     </ItemGroup>
 
 </Project>

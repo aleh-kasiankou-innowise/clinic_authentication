@@ -20,17 +20,17 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 {
     private readonly IntegrationTestingWebApplicationFactory _factory;
     private readonly HttpClient _httpClient;
-    private readonly IOptions<JwtData> _jwtData;
+    private readonly IOptions<JwtSettings> _jwtData;
 
     public TokenGenerationTests(IntegrationTestingWebApplicationFactory factory)
     {
         _factory = factory;
-        _httpClient = factory.CreateClient(new WebApplicationFactoryClientOptions()
+        _httpClient = factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false
         });
 
-        _jwtData = _factory.Services.GetService<IOptions<JwtData>>() ?? throw new InvalidOperationException();
+        _jwtData = _factory.Services.GetService<IOptions<JwtSettings>>() ?? throw new InvalidOperationException();
     }
 
 
@@ -39,7 +39,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
     {
         // Arrange
 
-        var validUserRegistrationData = new PatientCredentialsDto()
+        var validUserRegistrationData = new PatientCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.gmail.com",
             Password = "12345678"
@@ -74,7 +74,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto()
+        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"
@@ -103,7 +103,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto()
+        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"
@@ -127,7 +127,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto()
+        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"
@@ -140,7 +140,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
 
         var invalidJwtToken = new JwtSecurityToken(
-            issuer: _factory.UseConfiguration(x => x.GetValue<string>("JWT:ValidIssuer")),
+            _factory.UseConfiguration(x => x.GetValue<string>("JWT:ValidIssuer")),
             expires: DateTime.UtcNow - TimeSpan.FromHours(1),
             signingCredentials: new SigningCredentials(new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes("123456791011121314151617181920")),
@@ -166,7 +166,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto()
+        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"
@@ -179,7 +179,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
 
         var invalidJwtToken = new JwtSecurityToken(
-            issuer: "WrongIssuer",
+            "WrongIssuer",
             expires: DateTime.UtcNow - TimeSpan.FromHours(1),
             signingCredentials: new SigningCredentials(new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(_factory.UseConfiguration(x => x.GetValue<string>("JWT:Key")))),
@@ -205,7 +205,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto()
+        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"
@@ -219,7 +219,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
 
         var invalidRefreshToken = new JwtSecurityToken(
-            issuer: _factory.UseConfiguration(x => x.GetValue<string>("JWT:ValidIssuer")),
+            _factory.UseConfiguration(x => x.GetValue<string>("JWT:ValidIssuer")),
             expires: DateTime.UtcNow - TimeSpan.FromHours(1),
             signingCredentials: new SigningCredentials(new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes("123456791011121314151617181920")),
@@ -248,7 +248,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto()
+        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"
@@ -262,7 +262,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
 
         var invalidRefreshToken = new JwtSecurityToken(
-            issuer: "WrongIssuee",
+            "WrongIssuee",
             expires: DateTime.UtcNow - TimeSpan.FromHours(1),
             signingCredentials: new SigningCredentials(new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(_factory.UseConfiguration(x => x.GetValue<string>("JWT:Key")))),

@@ -3,45 +3,41 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using Innowise.Clinic.Auth.Constants;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Innowise.Clinic.Auth.IntegrationTesting;
 
-public static class TestHelper
+internal static class TestHelper
 {
-    
-    internal const string SignUpEndpointUri =
-        ControllerRoutes.AuthenticationControllerRoute + "/" + EndpointRoutes.SignUpEndpointRoute;
+    internal const string SignUpEndpointUri = "authentication/sign-up/patient";
+    internal const string RefreshTokenEndpointUri = "authentication/token/refresh";
+    internal const string SignInEndpointUri = "authentication/sign-in/patient";
+    internal const string SignOutEndpointUri = "authentication/sign-out";
 
-    internal const string RefreshTokenEndpointUri =
-        ControllerRoutes.AuthenticationControllerRoute + "/" + EndpointRoutes.RefreshTokenEndpointRoute;
-
-    internal const string SignInEndpointUri = ControllerRoutes.AuthenticationControllerRoute + "/" +
-                                              EndpointRoutes.SignInEndpointRoute;
-
-    internal const string SignOutEndpointUri = ControllerRoutes.AuthenticationControllerRoute + "/" +
-                                               EndpointRoutes.SignOutEndpointRoute;
-
-    
-    internal static int _uniqueNumber = 0;
+    private static int _uniqueNumber;
 
     internal static int UniqueNumber => _uniqueNumber++;
-    
+
 
     internal static ClaimsPrincipal ValidateJwtToken(IntegrationTestingWebApplicationFactory factory, string token)
     {
         var jwtTokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,
+            ValidateIssuer =
+                Convert.ToBoolean(factory.UseConfiguration(x =>
+                    x.GetValue<string>("JwtValidationConfiguration:ValidateIssuer"))),
             ValidIssuer = factory.UseConfiguration(x => x.GetValue<string>("JWT:ValidIssuer")),
-            ValidateIssuerSigningKey = true,
-            ValidateAudience = false,
+            ValidateIssuerSigningKey = Convert.ToBoolean(factory.UseConfiguration(x =>
+                x.GetValue<string>("JwtValidationConfiguration:ValidateIssuerSigningKey"))),
+            ValidateAudience = Convert.ToBoolean(factory.UseConfiguration(x =>
+                x.GetValue<string>("JwtValidationConfiguration:ValidateAudience"))),
+            ValidAudience = factory.UseConfiguration(x => x.GetValue<string>("JWT:ValidAudience")),
             IssuerSigningKey =
                 new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(factory.UseConfiguration(x => x.GetValue<string>("JWT:Key")))),
-            ValidateLifetime = true
+            ValidateLifetime = Convert.ToBoolean(factory.UseConfiguration(x =>
+                x.GetValue<string>("JwtValidationConfiguration:ValidateLifetime")))
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();

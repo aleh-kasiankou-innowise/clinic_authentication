@@ -20,13 +20,17 @@ namespace Innowise.Clinic.Auth.IntegrationTesting;
 
 public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly TestcontainersContainer _dbContainer;
-    private readonly TestcontainersContainer _mailContainer;
-
     private const string ContainerHost = "localhost";
+
+
+    private const string ContainerDbName = "AuthDb";
+    private const string ContainerDbUserName = "SA";
+    private const string ContainerDbPassword = "secureMssqlServerPassw0rd";
+    private readonly TestcontainersContainer _dbContainer;
     private readonly int _dbPort = GetFreeTcpPort();
-    private readonly int _smtpPort = GetFreeTcpPort();
     private readonly int _imapPort = GetFreeTcpPort();
+    private readonly TestcontainersContainer _mailContainer;
+    private readonly int _smtpPort = GetFreeTcpPort();
 
     public IntegrationTestingWebApplicationFactory()
     {
@@ -34,10 +38,18 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
         _mailContainer = PrepareMailContainer();
     }
 
+    public async Task InitializeAsync()
+    {
+        await _dbContainer.StartAsync();
+        await _mailContainer.StartAsync();
+    }
 
-    private const string ContainerDbName = "AuthDb";
-    private const string ContainerDbUserName = "SA";
-    private const string ContainerDbPassword = "secureMssqlServerPassw0rd";
+    public new async Task DisposeAsync()
+    {
+        await _dbContainer.StopAsync();
+        await _mailContainer.StopAsync();
+        await base.DisposeAsync();
+    }
 
 
     public T UseDbContext<T>(Func<ClinicAuthDbContext, T> func)
@@ -68,7 +80,7 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
                 d => d.ServiceType ==
                      typeof(DbContextOptions<ClinicAuthDbContext>));
 
-            services.Remove(descriptor);
+            if (descriptor != null) services.Remove(descriptor);
 
 
             services.AddDbContext<ClinicAuthDbContext>(options =>
@@ -76,26 +88,13 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
                 options.UseSqlServer(BuildConnectionString(_dbPort));
             });
 
-            services.Configure<JwtData>(x => { x.TokenValidityInSeconds = 5; });
-            services.Configure<SmtpData>(x =>
+            services.Configure<JwtSettings>(x => { x.TokenValidityInSeconds = 5; });
+            services.Configure<SmtpSettings>(x =>
             {
                 x.SmtpServerHost = ContainerHost;
                 x.SmtpServerPort = _smtpPort;
             });
         });
-    }
-
-    public async Task InitializeAsync()
-    {
-        await _dbContainer.StartAsync();
-        await _mailContainer.StartAsync();
-    }
-
-    public async Task DisposeAsync()
-    {
-        await _dbContainer.StopAsync();
-        await _mailContainer.StopAsync();
-        await base.DisposeAsync();
     }
 
     private TestcontainersContainer PrepareDbContainer()
@@ -106,7 +105,7 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
                 "ACCEPT_EULA", "Y").WithPortBinding(_dbPort, 1433)
             .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(1433)).Build();
     }
-    
+
     private TestcontainersContainer PrepareMailContainer()
     {
         return new TestcontainersBuilder<TestcontainersContainer>()
@@ -125,9 +124,9 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
 
     private static int GetFreeTcpPort()
     {
-        TcpListener l = new TcpListener(IPAddress.Loopback, 0);
+        var l = new TcpListener(IPAddress.Loopback, 0);
         l.Start();
-        int port = ((IPEndPoint)l.LocalEndpoint).Port;
+        var port = ((IPEndPoint)l.LocalEndpoint).Port;
         l.Stop();
         return port;
     }

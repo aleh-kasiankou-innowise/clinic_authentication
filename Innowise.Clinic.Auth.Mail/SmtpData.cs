@@ -1,6 +1,6 @@
 namespace Innowise.Clinic.Auth.Mail;
 
-public class SmtpData
+public record SmtpSettings
 {
     public string SmtpServerHost { get; set; }
     public int SmtpServerPort { get; set; }
