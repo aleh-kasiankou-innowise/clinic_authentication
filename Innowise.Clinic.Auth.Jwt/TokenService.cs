@@ -63,14 +63,17 @@ public class TokenService : ITokenService
         return authTokens;
     }
 
-    private JwtSecurityToken IssueToken(DateTime expirationDate, IEnumerable<Claim> claims)
+    private SecurityToken IssueToken(DateTime expirationDate, IEnumerable<Claim> claims)
     {
-        return new JwtSecurityToken(
-            _jwtOptions.Value.ValidIssuer,
-            expires: expirationDate,
-            signingCredentials: new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256),
-            claims: claims
-        );
+        var tokenDescriptor = new SecurityTokenDescriptor()
+        {
+            Expires = expirationDate,
+            SigningCredentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256),
+            Issuer = _jwtOptions.Value.ValidIssuer,
+            Subject = new ClaimsIdentity(claims)
+        };
+        var tokenHandler = new JwtSecurityTokenHandler();
+        return tokenHandler.CreateToken(tokenDescriptor);
     }
 
     private async Task<Guid> RegisterIssuedRefreshTokenInDbAsync(Guid userId)

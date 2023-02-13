@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using Innowise.Clinic.Auth.DependencyConfiguration;
 using Innowise.Clinic.Auth.Dto;
@@ -5,7 +8,11 @@ using Innowise.Clinic.Auth.Jwt;
 using Innowise.Clinic.Auth.Mail;
 using Innowise.Clinic.Auth.Middleware;
 using Innowise.Clinic.Auth.Persistence;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +32,7 @@ builder.Services.AddDbContext<ClinicAuthDbContext>(
     opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("default")));
 builder.Services.AddAuthentication();
 builder.Services.ConfigureCustomValidators();
-builder.Services.ConfigureIdentity();
+builder.Services.ConfigureIdentity(builder.Configuration.GetSection("JwtValidationConfiguration"));
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JWT"));
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("AuthSmtp"));
 builder.Services.Configure<JwtValidationSettings>(builder.Configuration.GetSection("JwtValidationConfiguration"));

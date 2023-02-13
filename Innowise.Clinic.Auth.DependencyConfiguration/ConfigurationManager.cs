@@ -21,15 +21,20 @@ namespace Innowise.Clinic.Auth.DependencyConfiguration;
 
 public static class ConfigurationManager
 {
-    public static IServiceCollection ConfigureIdentity(this IServiceCollection services)
+    public static IServiceCollection ConfigureIdentity(this IServiceCollection services,
+        IConfigurationSection jwtValidationConfiguration)
     {
         services.AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>(options =>
             {
-                options.Password.RequireDigit = false;
-                options.Password.RequiredLength = 6;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
+                options.Password.RequireDigit =
+                    Convert.ToBoolean(jwtValidationConfiguration["RequireDigitsInPassword"]);
+                options.Password.RequiredLength = Convert.ToInt32(jwtValidationConfiguration["MinimalPasswordLength"]);
+                options.Password.RequireLowercase =
+                    Convert.ToBoolean(jwtValidationConfiguration["RequireLowercaseLettersInPassword"]);
+                options.Password.RequireNonAlphanumeric =
+                    Convert.ToBoolean(jwtValidationConfiguration["RequireNonAlphanumericInPassword"]);
+                options.Password.RequireUppercase =
+                    Convert.ToBoolean(jwtValidationConfiguration["RequireUppercaseLettersInPassword"]);
             })
             .AddEntityFrameworkStores<ClinicAuthDbContext>()
             .AddDefaultTokenProviders()
