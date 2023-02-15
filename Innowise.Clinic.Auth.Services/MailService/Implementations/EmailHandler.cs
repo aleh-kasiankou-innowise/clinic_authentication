@@ -1,4 +1,5 @@
-﻿using Innowise.Clinic.Auth.Services.Constants;
+﻿using Innowise.Clinic.Auth.Dto;
+using Innowise.Clinic.Auth.Services.Constants.Email;
 using Innowise.Clinic.Auth.Services.MailService.Data;
 using Innowise.Clinic.Auth.Services.MailService.Interfaces;
 using MailKit.Net.Smtp;
@@ -42,5 +43,11 @@ public class EmailHandler : IEmailHandler
     {
         var emailBody = EmailBodyBuilder.BuildBodyForEmailConfirmation(emailConfirmationLink);
         await SendMessageAsync(mailRecipient, EmailSubjects.EmailConfirmation, emailBody);
+    }
+
+    public async Task SendEmailWithCredentialsAsync(UserCredentialsDto credentials, string role)
+    {
+        var emailBody = EmailBodyBuilder.BuildBodyWithCredentials(credentials, role);
+        await SendMessageAsync(credentials.Email, EmailSubjects.AdminProfileRegistration, emailBody);
     }
 }

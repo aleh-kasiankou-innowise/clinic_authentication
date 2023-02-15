@@ -4,7 +4,7 @@ using System.Text;
 using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Exceptions.Jwt;
 using Innowise.Clinic.Auth.Persistence;
-using Innowise.Clinic.Auth.Services.Constants;
+using Innowise.Clinic.Auth.Services.Constants.Jwt;
 using Innowise.Clinic.Auth.Services.JwtService.Data;
 using Innowise.Clinic.Auth.Services.JwtService.Interfaces;
 using Microsoft.EntityFrameworkCore;

@@ -4,7 +4,7 @@ using System.Text;
 using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Persistence;
 using Innowise.Clinic.Auth.Persistence.Models;
-using Innowise.Clinic.Auth.Services.Constants;
+using Innowise.Clinic.Auth.Services.Constants.Jwt;
 using Innowise.Clinic.Auth.Services.JwtService.Data;
 using Innowise.Clinic.Auth.Services.JwtService.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -93,18 +93,16 @@ public class TokenService : ITokenService
 
     private async Task<ClaimsPrincipal> GetRegisteredUserPrincipalAsync(IdentityUser<Guid> user)
     {
-        var getUserRolesTask = _userManager.GetRolesAsync(user);
-
         var authClaims = new List<Claim>
         {
             new(JwtClaimTypes.UserIdClaim, user.Id.ToString())
         };
 
-        var userRoles = await getUserRolesTask;
-        foreach (var userRole in userRoles) authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+        var userRoles = await _userManager.GetRolesAsync(user);
 
-        var claimsIdentity = new ClaimsIdentity(authClaims);
-        var principal = new ClaimsPrincipal(claimsIdentity);
-        return principal;
+        authClaims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
+        authClaims.AddRange(await _userManager.GetClaimsAsync(user));
+
+        return new ClaimsPrincipal(new ClaimsIdentity(authClaims));
     }
 }

@@ -28,11 +28,13 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Innowise.Clinic.Auth.RequestPipeline\Innowise.Clinic.Auth.RequestPipeline.csproj"/>
         <ProjectReference Include="..\Innowise.Clinic.Auth.Services\Innowise.Clinic.Auth.Services.csproj"/>
         <ProjectReference Include="..\Innowise.Clinic.Auth.Validators\Innowise.Clinic.Auth.Validators.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.14"/>
         <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="6.1.0"/>
     </ItemGroup>
 

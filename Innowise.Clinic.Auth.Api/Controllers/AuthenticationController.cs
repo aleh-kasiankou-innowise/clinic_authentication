@@ -39,9 +39,10 @@ public class AuthenticationController : ControllerBase
     [HttpPost("sign-up/patient")]
     [ProducesResponseType(typeof(AuthTokenPairDto), 200)]
     [ProducesResponseType(typeof(void), 400)]
-    public async Task<ActionResult<AuthTokenPairDto>> RegisterPatient(UserCredentialsDto patientCredentials)
+    public async Task<ActionResult<string>> RegisterPatient(UserCredentialsDto patientCredentials)
     {
-        return Ok(await _userManagementService.RegisterPatientAsync(patientCredentials));
+        await _userManagementService.RegisterPatientAsync(patientCredentials);
+        return Ok("The email confirmation link has been sent to your email address!");
     }
 
 

@@ -1,5 +1,6 @@
 using Innowise.Clinic.Auth.Persistence;
 using Innowise.Clinic.Auth.Validators.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Innowise.Clinic.Auth.Validators.Custom;
 
@@ -14,6 +15,7 @@ public class TokenStateValidator : ITokenStateValidator
 
     public async Task<bool> IsTokenStateValid(Guid id)
     {
-        throw new NotImplementedException();
+        // TODO Might be a good idea to extend current user model to include fields like isLoginRequired
+        return await _dbContext.RefreshTokens.AnyAsync(x => x.UserId == id);
     }
 }

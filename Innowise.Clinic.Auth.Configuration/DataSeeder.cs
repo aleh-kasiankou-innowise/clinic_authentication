@@ -12,17 +12,20 @@ public class DataSeeder
         new()
         {
             UserName = "patient@clinic.com",
-            Email = "patient@clinic.com"
+            Email = "patient@clinic.com",
+            EmailConfirmed = true
         },
         new()
         {
             UserName = "doctor@clinic.com",
-            Email = "doctor@clinic.com"
+            Email = "doctor@clinic.com",
+            EmailConfirmed = true
         },
         new()
         {
             UserName = "receptionist@clinic.com",
-            Email = "receptionist@clinic.com"
+            Email = "receptionist@clinic.com",
+            EmailConfirmed = true
         }
     };
 

@@ -35,7 +35,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Innowise.Clinic.Auth.Configuration\Innowise.Clinic.Auth.Configuration.csproj"/>
-        <ProjectReference Include="..\Innowise.Clinic.Auth.Extensions\Innowise.Clinic.Auth.Extensions.csproj"/>
         <ProjectReference Include="..\Innowise.Clinic.Auth.Dto\Innowise.Clinic.Auth.Dto.csproj"/>
         <ProjectReference Include="..\Innowise.Clinic.Auth.RequestPipeline\Innowise.Clinic.Auth.RequestPipeline.csproj"/>
         <ProjectReference Include="..\Innowise.Clinic.Auth.Persistence\Innowise.Clinic.Auth.Persistence.csproj"/>

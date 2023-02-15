@@ -4,7 +4,9 @@ namespace Innowise.Clinic.Auth.Services.UserManagementService.Interfaces;
 
 public interface IUserManagementService
 {
-    Task<AuthTokenPairDto> RegisterPatientAsync(UserCredentialsDto patientCredentials);
+    Task RegisterPatientAsync(UserCredentialsDto patientCredentials);
+
+    Task RegisterConfirmedUserAsync(UserCredentialsDto userCredentials, UserCreationRequestDto role);
 
     Task<AuthTokenPairDto> SignInUserAsync(UserCredentialsDto patientCredentialsDto);
 
