@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using Innowise.Clinic.Auth.Configuration.Swagger;
 using Innowise.Clinic.Auth.Dto;
-using Innowise.Clinic.Auth.Filters;
-using Innowise.Clinic.Auth.UserManagement.interfaces;
+using Innowise.Clinic.Auth.Middleware;
+using Innowise.Clinic.Auth.Services.UserManagementService.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Innowise.Clinic.Auth.Api.Controllers;
 
@@ -37,26 +39,27 @@ public class AuthenticationController : ControllerBase
     [HttpPost("sign-up/patient")]
     [ProducesResponseType(typeof(AuthTokenPairDto), 200)]
     [ProducesResponseType(typeof(void), 400)]
-    public async Task<ActionResult<AuthTokenPairDto>> RegisterPatient(PatientCredentialsDto patientCredentials)
+    public async Task<ActionResult<AuthTokenPairDto>> RegisterPatient(UserCredentialsDto patientCredentials)
     {
         return Ok(await _userManagementService.RegisterPatientAsync(patientCredentials));
     }
 
 
-    /// <summary>Signs in the registered patient.</summary>
-    /// <param name="patientCredentials">The email and the password of the patient.</param>
+    /// <summary>Signs in the registered user.</summary>
+    /// <param name="userCredentials">The user's email and the password.</param>
     /// <returns>
     ///     A pair of tokens. A short-living security token and long-living refresh token.
     ///     The latter is used to generate new security token.
     /// </returns>
-    /// <response code="200">Success. The user has been registered. A pair of tokens is returned</response>
+    /// <response code="200">Success. The user is logged in. A pair of tokens is returned</response>
     /// <response code="401"> Fail. The account with the provided credentials doesn't exist. </response>
-    [HttpPost("sign-in/patient")]
+    [HttpPost("sign-in")]
     [ProducesResponseType(typeof(AuthTokenPairDto), 200)]
     [ProducesResponseType(typeof(void), 401)]
-    public async Task<ActionResult<AuthTokenPairDto>> SignInAsPatient(PatientCredentialsDto patientCredentials)
+    [SwaggerRequestExample(typeof(UserCredentialsDto), typeof(SignInCredentialsExample))]
+    public async Task<ActionResult<AuthTokenPairDto>> SignInAsPatient(UserCredentialsDto userCredentials)
     {
-        return Ok(await _userManagementService.SignInUserAsync(patientCredentials));
+        return Ok(await _userManagementService.SignInUserAsync(userCredentials));
     }
 
     /// <summary>Logs out the user. Revokes the refresh token.</summary>

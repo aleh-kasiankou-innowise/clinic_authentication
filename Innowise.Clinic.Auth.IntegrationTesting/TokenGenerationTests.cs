@@ -6,7 +6,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Innowise.Clinic.Auth.Dto;
-using Innowise.Clinic.Auth.Jwt;
+using Innowise.Clinic.Auth.Services.JwtService.Data;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,7 +39,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
     {
         // Arrange
 
-        var validUserRegistrationData = new PatientCredentialsDto
+        var validUserRegistrationData = new UserCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.gmail.com",
             Password = "12345678"
@@ -74,7 +74,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto
+        var userRegistrationDataWithRegisteredEmail = new UserCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"
@@ -103,7 +103,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto
+        var userRegistrationDataWithRegisteredEmail = new UserCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"
@@ -127,7 +127,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto
+        var userRegistrationDataWithRegisteredEmail = new UserCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"
@@ -166,7 +166,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto
+        var userRegistrationDataWithRegisteredEmail = new UserCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"
@@ -205,7 +205,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto
+        var userRegistrationDataWithRegisteredEmail = new UserCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"
@@ -248,7 +248,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto
+        var userRegistrationDataWithRegisteredEmail = new UserCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"

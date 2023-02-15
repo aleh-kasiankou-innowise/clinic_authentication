@@ -1,20 +1,18 @@
-using System;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using Innowise.Clinic.Auth.DependencyConfiguration;
+using Innowise.Clinic.Auth.Configuration;
+using Innowise.Clinic.Auth.Configuration.Swagger;
 using Innowise.Clinic.Auth.Dto;
-using Innowise.Clinic.Auth.Jwt;
-using Innowise.Clinic.Auth.Mail;
 using Innowise.Clinic.Auth.Middleware;
 using Innowise.Clinic.Auth.Persistence;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
+using Innowise.Clinic.Auth.Services.JwtService.Data;
+using Innowise.Clinic.Auth.Services.MailService.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//TODO MOVE THE CODE TO A DIFFERENT PLACE
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -26,8 +24,12 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory,
         $"{Assembly.GetAssembly(typeof(AuthTokenPairDto))?.GetName().Name}.xml"));
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory,
-        $"{Assembly.GetAssembly(typeof(PatientCredentialsDto))?.GetName().Name}.xml"));
+        $"{Assembly.GetAssembly(typeof(UserCredentialsDto))?.GetName().Name}.xml"));
+    options.ExampleFilters();
 });
+
+builder.Services.AddSwaggerExamplesFromAssemblyOf<SignInCredentialsExample>();
+
 builder.Services.AddDbContext<ClinicAuthDbContext>(
     opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("default")));
 builder.Services.AddAuthentication();
@@ -54,6 +56,9 @@ using (var scope = app.Services.CreateScope())
 
     var context = services.GetRequiredService<ClinicAuthDbContext>();
     if (context.Database.GetPendingMigrations().Any()) context.Database.Migrate();
+
+    var userManager = services.GetRequiredService<UserManager<IdentityUser<Guid>>>();
+    await new DataSeeder(userManager).SeedUsers();
 }
 
 app.UseHttpsRedirection();

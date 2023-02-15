@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>10</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="Microsoft.AspNetCore.Identity">
+            <HintPath>..\..\..\..\..\.nuget\packages\microsoft.aspnetcore.app.ref\6.0.13\ref\net6.0\Microsoft.AspNetCore.Identity.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Innowise.Clinic.Auth.Exceptions\Innowise.Clinic.Auth.Exceptions.csproj"/>
+        <ProjectReference Include="..\Innowise.Clinic.Auth.Extensions\Innowise.Clinic.Auth.Extensions.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MailKit" Version="3.5.0"/>
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.26.1"/>
+    </ItemGroup>
+
+</Project>

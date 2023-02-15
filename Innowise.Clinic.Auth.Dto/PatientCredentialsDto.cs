@@ -5,10 +5,10 @@ namespace Innowise.Clinic.Auth.Dto;
 /// <summary>
 ///     Patient e-mail and password.
 /// </summary>
-public record PatientCredentialsDto
+public record UserCredentialsDto
 {
     /// <summary>
-    ///     Patient's e-mail address.
+    ///     User's e-mail address.
     /// </summary>
     /// <example>patient@gmail.com</example>
     [EmailAddress]
@@ -16,7 +16,7 @@ public record PatientCredentialsDto
     public string Email { get; init; }
 
     /// <summary>
-    ///     Patient's password.
+    ///     User's password.
     /// </summary>
     /// <example>lEm0nbangpuss</example>
     [Required(ErrorMessage = "Password is required")]

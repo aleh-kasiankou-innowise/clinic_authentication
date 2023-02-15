@@ -32,7 +32,7 @@ public class SignUpTests : IClassFixture<IntegrationTestingWebApplicationFactory
     {
         // Arrange
 
-        var validUserRegistrationData = new PatientCredentialsDto
+        var validUserRegistrationData = new UserCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.com",
             Password = "12345678"
@@ -59,7 +59,7 @@ public class SignUpTests : IClassFixture<IntegrationTestingWebApplicationFactory
     {
         // Arrange
 
-        var userRegistrationDataWithInvalidMail = new PatientCredentialsDto
+        var userRegistrationDataWithInvalidMail = new UserCredentialsDto
         {
             Email = "testInvalidEmail",
             Password = "12345678"
@@ -82,7 +82,7 @@ public class SignUpTests : IClassFixture<IntegrationTestingWebApplicationFactory
     {
         // Arrange
 
-        var userRegistrationDataWithShortPassword = new PatientCredentialsDto
+        var userRegistrationDataWithShortPassword = new UserCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.gmail.com",
             Password = "12345"
@@ -105,7 +105,7 @@ public class SignUpTests : IClassFixture<IntegrationTestingWebApplicationFactory
     {
         // Arrange
 
-        var userRegistrationDataWithLongPassword = new PatientCredentialsDto
+        var userRegistrationDataWithLongPassword = new UserCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.gmail.com",
             Password = "12345678911131517"
@@ -131,7 +131,7 @@ public class SignUpTests : IClassFixture<IntegrationTestingWebApplicationFactory
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new PatientCredentialsDto
+        var userRegistrationDataWithRegisteredEmail = new UserCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"

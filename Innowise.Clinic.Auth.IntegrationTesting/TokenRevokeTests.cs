@@ -29,7 +29,7 @@ public class TokenRevokeTests : IClassFixture<IntegrationTestingWebApplicationFa
     {
         // Arrange
 
-        var validUserRegistrationData = new PatientCredentialsDto
+        var validUserRegistrationData = new UserCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.com",
             Password = "12345678"
@@ -53,7 +53,7 @@ public class TokenRevokeTests : IClassFixture<IntegrationTestingWebApplicationFa
     {
         // Arrange
 
-        var validUserRegistrationData = new PatientCredentialsDto
+        var validUserRegistrationData = new UserCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.com",
             Password = "12345678"
@@ -75,13 +75,13 @@ public class TokenRevokeTests : IClassFixture<IntegrationTestingWebApplicationFa
     {
         // Arrange
 
-        var validUserRegistrationData = new PatientCredentialsDto
+        var validUserRegistrationData = new UserCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.com",
             Password = "12345678"
         };
 
-        var invalidUserCredentials = new PatientCredentialsDto
+        var invalidUserCredentials = new UserCredentialsDto
         {
             Email = validUserRegistrationData.Email,
             Password = "87654321"
