@@ -7,7 +7,7 @@ public static class ServicesRoutes
 
     public static readonly string AccountProfileLinkingUrl = "http://profile:80/helperservices/link-account";
 
-    private static readonly string EmailConfirmationPublicUrl = "auth/email/confirm/";
+    private static readonly string EmailConfirmationPublicUrl = "authentication/email/confirm/";
 
     public static string BuildEmailConfirmationLink(string tokenEncoded, string userId)
     {

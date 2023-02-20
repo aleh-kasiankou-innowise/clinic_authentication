@@ -114,6 +114,8 @@ public class UserManagementService : IUserManagementService
 
         var user = await _userManager.FindByIdAsync(userId);
 
+        // TODO CHECK FOR NULL AND THROW CUSTOM EXCEPTION
+
         var confirmation = await _userManager.ConfirmEmailAsync(user, emailConfirmationToken);
 
         if (!confirmation.Succeeded) throw new EmailConfirmationFailedException(confirmation.Errors);

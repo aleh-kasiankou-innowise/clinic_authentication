@@ -112,6 +112,6 @@ public class AuthenticationController : ControllerBase
         [FromQuery] [Required] string userId)
     {
         await _userManagementService.ConfirmUserEmailAsync(userId, emailConfirmationToken);
-        return Ok();
+        return Ok("Email has been confirmed. You can sign in now!");
     }
 }
