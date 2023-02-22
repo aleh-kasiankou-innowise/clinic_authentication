@@ -6,7 +6,6 @@ public class DataSeeder
 {
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
-
     private readonly IEnumerable<IdentityUser<Guid>> _users = new List<IdentityUser<Guid>>
     {
         new()

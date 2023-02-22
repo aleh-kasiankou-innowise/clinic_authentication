@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -14,7 +13,6 @@ public class SignUpTests : IClassFixture<IntegrationTestingWebApplicationFactory
 {
     private readonly IntegrationTestingWebApplicationFactory _factory;
     private readonly HttpClient _httpClient;
-    private readonly Guid _patientRoleId;
 
     public SignUpTests(IntegrationTestingWebApplicationFactory factory)
     {
@@ -23,8 +21,7 @@ public class SignUpTests : IClassFixture<IntegrationTestingWebApplicationFactory
         {
             AllowAutoRedirect = false
         });
-
-        _patientRoleId = _factory.UseDbContext(x => x.Roles.Single(r => r.Name == UserRoles.Patient).Id);
+        _factory.UseDbContext(x => x.Roles.Single(r => r.Name == UserRoles.Patient).Id);
     }
 
     [Fact]
@@ -116,7 +113,6 @@ public class SignUpTests : IClassFixture<IntegrationTestingWebApplicationFactory
         Assert.False(_factory.UseDbContext(x => x.Users
             .Any(u => u.Email == userRegistrationDataWithLongPassword.Email)));
     }
-
 
     [Fact]
     public async Task TestPatientWithNonUniqueEmailAndValidPasswordRegistered_Fail()

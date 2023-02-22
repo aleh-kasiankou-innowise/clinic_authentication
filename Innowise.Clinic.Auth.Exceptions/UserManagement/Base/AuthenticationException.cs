@@ -2,10 +2,9 @@ namespace Innowise.Clinic.Auth.Exceptions.UserManagement.Base;
 
 public class AuthenticationException : ApplicationException
 {
-    public AuthenticationException(string message, int statusCode) : base(message)
+    public AuthenticationException(string message) : base(message)
     {
-        StatusCode = statusCode;
     }
 
-    public int StatusCode { get; }
+    public int StatusCode { get; set; }
 }

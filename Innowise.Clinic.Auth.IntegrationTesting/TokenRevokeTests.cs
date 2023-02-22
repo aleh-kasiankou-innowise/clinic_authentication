@@ -14,7 +14,6 @@ public class TokenRevokeTests : IClassFixture<IntegrationTestingWebApplicationFa
     private readonly IntegrationTestingWebApplicationFactory _factory;
     private readonly HttpClient _httpClient;
 
-
     public TokenRevokeTests(IntegrationTestingWebApplicationFactory factory)
     {
         _factory = factory;

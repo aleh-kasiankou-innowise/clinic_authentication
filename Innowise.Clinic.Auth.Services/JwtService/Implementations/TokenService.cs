@@ -32,26 +32,20 @@ public class TokenService : ITokenService
     public string GenerateJwtToken(ClaimsPrincipal principal)
     {
         var expirationDate = DateTime.UtcNow.AddSeconds(_jwtOptions.Value.TokenValidityInSeconds);
-
         var token = IssueToken(expirationDate, principal.Claims);
-
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
     public async Task<string> GenerateRefreshTokenAsync(Guid userId)
     {
         var expirationDate = DateTime.UtcNow.AddDays(_jwtOptions.Value.RefreshTokenValidityInDays);
-
         var tokenId = await RegisterIssuedRefreshTokenInDbAsync(userId);
-
         var refreshTokenClaimsCollection = new List<Claim>
         {
             new(JwtClaimTypes.TokenIdClaim, tokenId.ToString()),
             new(JwtClaimTypes.UserIdClaim, userId.ToString())
         };
-
         var token = IssueToken(expirationDate, refreshTokenClaimsCollection);
-
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
@@ -61,7 +55,6 @@ public class TokenService : ITokenService
         var jwtToken = GenerateJwtToken(principal);
         var refreshToken = await GenerateRefreshTokenAsync(user.Id);
         var authTokens = new AuthTokenPairDto(jwtToken, refreshToken);
-
         return authTokens;
     }
 
@@ -87,7 +80,6 @@ public class TokenService : ITokenService
 
         await _dbContext.RefreshTokens.AddAsync(refreshToken);
         await _dbContext.SaveChangesAsync();
-
         return refreshToken.TokenId;
     }
 
@@ -97,12 +89,9 @@ public class TokenService : ITokenService
         {
             new(JwtClaimTypes.UserIdClaim, user.Id.ToString())
         };
-
         var userRoles = await _userManager.GetRolesAsync(user);
-
         authClaims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
         authClaims.AddRange(await _userManager.GetClaimsAsync(user));
-
         return new ClaimsPrincipal(new ClaimsIdentity(authClaims));
     }
 }

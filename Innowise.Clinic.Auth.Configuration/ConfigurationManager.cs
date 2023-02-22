@@ -45,7 +45,6 @@ public static class ConfigurationManager
         services.ConfigureJwtAuthentication(jwtConfiguration, jwtValidationConfiguration);
         services.ConfigureCustomValidators();
         services.AddSingleton<AuthenticationExceptionHandlingMiddleware>();
-
         return services;
     }
 
@@ -89,7 +88,6 @@ public static class ConfigurationManager
         });
 
         services.AddSwaggerExamplesFromAssemblyOf<SignInCredentialsExample>();
-
         return services;
     }
 
@@ -106,7 +104,6 @@ public static class ConfigurationManager
         services.Configure<SmtpSettings>(smtpConfiguration);
         services.Configure<JwtValidationSettings>(jwtValidationConfiguration);
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
-
         return services;
     }
 
@@ -115,9 +112,11 @@ public static class ConfigurationManager
         using (var scope = app.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
-
             var context = services.GetRequiredService<ClinicAuthDbContext>();
-            if ((await context.Database.GetPendingMigrationsAsync()).Any()) await context.Database.MigrateAsync();
+            if ((await context.Database.GetPendingMigrationsAsync()).Any())
+            {
+                await context.Database.MigrateAsync();
+            }
 
             var userManager = services.GetRequiredService<UserManager<IdentityUser<Guid>>>();
             await new DataSeeder(userManager).SeedUsers();
@@ -143,8 +142,6 @@ public static class ConfigurationManager
             .AddEntityFrameworkStores<ClinicAuthDbContext>()
             .AddDefaultTokenProviders()
             .AddPasswordValidators();
-
-
         return services;
     }
 
@@ -180,16 +177,13 @@ public static class ConfigurationManager
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ITokenRevoker, RefreshTokenRevoker>();
         services.AddScoped<ITokenStateValidator, TokenStateValidator>();
-
         return services;
     }
-
 
     private static IServiceCollection ConfigureCustomValidators(this IServiceCollection services)
     {
         services.AddScoped<ITokenValidator, TokenValidator>();
         services.AddScoped<IEmailValidator, EmailUniquenessValidator>();
-
         return services;
     }
 }

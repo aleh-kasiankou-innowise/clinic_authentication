@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Innowise.Clinic.Auth.Api.Controllers.Abstractions;
 using Innowise.Clinic.Auth.Configuration.Swagger;
 using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Middleware;
@@ -13,14 +14,10 @@ namespace Innowise.Clinic.Auth.Api.Controllers;
 ///     It registers patients, returns security + refresh tokens for all users who successfully logged in
 ///     and revokes tokens for whose willing to log out.
 /// </summary>
-[ApiController]
-[Route("[controller]")]
-[Produces("application/json")]
 [ModelExceptionFilter]
-public class AuthenticationController : ControllerBase
+public class AuthenticationController : ApiControllerBase
 {
     private readonly IUserManagementService _userManagementService;
-
 
     /// <inheritdoc />
     public AuthenticationController(IUserManagementService userManagementService)
@@ -44,7 +41,6 @@ public class AuthenticationController : ControllerBase
         await _userManagementService.RegisterPatientAsync(patientCredentials);
         return Ok("The email confirmation link has been sent to your email address!");
     }
-
 
     /// <summary>Signs in the registered user.</summary>
     /// <param name="userCredentials">The user's email and the password.</param>

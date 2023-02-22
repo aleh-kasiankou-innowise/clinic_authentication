@@ -7,7 +7,6 @@ namespace Innowise.Clinic.Auth.Dto;
 public class AuthTokenPairDto
 {
     public AuthTokenPairDto(string securityToken, string refreshToken)
-
     {
         SecurityToken = securityToken;
         RefreshToken = refreshToken;

@@ -8,9 +8,8 @@ public class CredentialValidationFailedException : AuthenticationModelException
     private const string DefaultMessage = "The provided credentials are not valid";
 
     public CredentialValidationFailedException(IEnumerable<IdentityError> modelErrors) : base(
-        DefaultMessage, StatusCode, modelErrors)
+        DefaultMessage, modelErrors)
     {
+        StatusCode = 400;
     }
-
-    public new static int StatusCode => 400;
 }

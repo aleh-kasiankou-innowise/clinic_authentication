@@ -31,9 +31,7 @@ public class TokenValidator : ITokenValidator
         bool tokenShouldBeExpired)
     {
         var principal = ExtractPrincipalFromJwtToken(authTokens.SecurityToken, tokenShouldBeExpired);
-
         await ValidateRefreshTokenAsync(authTokens.RefreshToken);
-
         return principal;
     }
 
@@ -46,7 +44,6 @@ public class TokenValidator : ITokenValidator
                 throw new JwtTokenNotExpiredException();
 
             var principal = ValidateTokenAndReturnPrinciple(token, false);
-
             return principal;
         }
 
@@ -63,15 +60,23 @@ public class TokenValidator : ITokenValidator
         var extractedTokenId = principal.FindFirstValue(JwtClaimTypes.TokenIdClaim);
         var associatedUserId = principal.FindFirstValue(JwtClaimTypes.UserIdClaim);
 
-        if (extractedTokenId == null) throw new TokenLacksTokenIdException();
-        if (associatedUserId == null) throw new TokenLacksUserIdException();
+        if (extractedTokenId == null)
+        {
+            throw new TokenLacksTokenIdException();
+        }
 
-        var tokenIsRegisteredInDb = await _dbContext.RefreshTokens.AnyAsync(x =>
+        if (associatedUserId == null)
+        {
+            throw new TokenLacksUserIdException();
+        }
+
+        var isTokenRegisteredInDb = await _dbContext.RefreshTokens.AnyAsync(x =>
             x.TokenId == Guid.Parse(extractedTokenId) &&
             x.UserId == Guid.Parse(associatedUserId));
-
-
-        if (!tokenIsRegisteredInDb) throw new UnknownRefreshTokenException();
+        if (!isTokenRegisteredInDb)
+        {
+            throw new UnknownRefreshTokenException();
+        }
     }
 
     private ClaimsPrincipal ValidateTokenAndReturnPrinciple(string token, bool validateExpirationDate)
@@ -88,10 +93,8 @@ public class TokenValidator : ITokenValidator
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
-
         var principal = tokenHandler.ValidateToken(token, jwtTokenValidationParameters,
             out _);
-
         return principal;
     }
 }

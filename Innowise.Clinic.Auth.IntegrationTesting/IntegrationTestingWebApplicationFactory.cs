@@ -21,11 +21,10 @@ namespace Innowise.Clinic.Auth.IntegrationTesting;
 public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private const string ContainerHost = "localhost";
-
-
     private const string ContainerDbName = "AuthDb";
     private const string ContainerDbUserName = "SA";
     private const string ContainerDbPassword = "secureMssqlServerPassw0rd";
+
     private readonly TestcontainersContainer _dbContainer;
     private readonly int _dbPort = GetFreeTcpPort();
     private readonly int _imapPort = GetFreeTcpPort();
@@ -51,7 +50,6 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
         await _mailContainer.StopAsync();
         await base.DisposeAsync();
     }
-
 
     public T UseDbContext<T>(Func<ClinicAuthDbContext, T> func)
     {
@@ -81,8 +79,10 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
                 d => d.ServiceType ==
                      typeof(DbContextOptions<ClinicAuthDbContext>));
 
-            if (descriptor != null) services.Remove(descriptor);
-
+            if (descriptor != null)
+            {
+                services.Remove(descriptor);
+            }
 
             services.AddDbContext<ClinicAuthDbContext>(options =>
             {

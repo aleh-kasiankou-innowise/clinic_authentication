@@ -6,13 +6,13 @@ public class UserNotFoundException : AuthenticationException
 {
     private const string DefaultMessage = "The user with provided email is not registered.";
 
-    public UserNotFoundException() : base(DefaultMessage, StatusCode)
+    public UserNotFoundException() : base(DefaultMessage)
     {
+        StatusCode = 400;
     }
 
-    public UserNotFoundException(string message) : base(message, StatusCode)
+    public UserNotFoundException(string message) : base(message)
     {
+        StatusCode = 400;
     }
-
-    public new static int StatusCode => 400;
 }

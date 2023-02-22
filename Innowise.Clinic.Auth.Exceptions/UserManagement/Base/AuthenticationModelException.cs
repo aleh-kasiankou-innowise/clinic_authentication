@@ -4,13 +4,12 @@ namespace Innowise.Clinic.Auth.Exceptions.UserManagement.Base;
 
 public class AuthenticationModelException : ApplicationException
 {
-    public AuthenticationModelException(string message, int statusCode, IEnumerable<IdentityError> errors) :
+    public AuthenticationModelException(string message, IEnumerable<IdentityError> errors) :
         base(message)
     {
-        StatusCode = statusCode;
         Errors = errors;
     }
 
-    public int StatusCode { get; }
+    public int StatusCode { get; set; }
     public IEnumerable<IdentityError> Errors { get; }
 }
