@@ -6,9 +6,8 @@ public class UserAlreadyRegisteredException : AuthenticationException
 {
     private const string DefaultMessage = "The user with the provided email is already registered";
 
-    public UserAlreadyRegisteredException() : base(DefaultMessage, StatusCode)
+    public UserAlreadyRegisteredException() : base(DefaultMessage)
     {
+        StatusCode = 400;
     }
-
-    public new static int StatusCode => 400;
 }

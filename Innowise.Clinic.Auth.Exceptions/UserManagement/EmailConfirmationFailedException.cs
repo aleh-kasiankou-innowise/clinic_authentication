@@ -7,10 +7,8 @@ public class EmailConfirmationFailedException : AuthenticationModelException
 {
     public const string DefaultMessage = "The Email confirmation failed. Please try again later.";
 
-    public EmailConfirmationFailedException(IEnumerable<IdentityError> errors) : base(DefaultMessage, StatusCode,
-        errors)
+    public EmailConfirmationFailedException(IEnumerable<IdentityError> errors) : base(DefaultMessage, errors)
     {
+        StatusCode = 400;
     }
-
-    public new static int StatusCode => 400;
 }
