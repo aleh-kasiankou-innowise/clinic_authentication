@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Innowise.Clinic.Auth.Dto;
+using Innowise.Clinic.Auth.Exceptions.UserManagement;
 using Innowise.Clinic.Auth.Services.Constants.Jwt;
 using Innowise.Clinic.Auth.Services.JwtService.Data;
 using Innowise.Clinic.Auth.Services.JwtService.Interfaces;
@@ -19,12 +20,6 @@ public class HelperServicesController : ControllerBase
     private readonly IUserManagementService _userManagementService;
     private readonly JwtValidationSettings _validationSettings;
 
-    // generate credentials, send confirmation mail, add claims for limiting access
-
-    // doctors can only interact with their own profiles
-    // patients can only interact with their own profiles 
-    // receptionists can interact with any profiles
-
     public HelperServicesController(IUserManagementService userManagementService,
         IUserCredentialsGenerationService passwordGenerator, IOptions<JwtValidationSettings> validationSettings)
     {
@@ -41,7 +36,6 @@ public class HelperServicesController : ControllerBase
                 userCreationRequest.Email);
 
         await _userManagementService.RegisterConfirmedUserAsync(userCredentials, userCreationRequest);
-
         return Ok();
     }
 
@@ -49,9 +43,9 @@ public class HelperServicesController : ControllerBase
     public async Task<IActionResult> LinkToProfile([FromBody] UserProfileLinkingDto profileLinkingDto,
         [FromServices] UserManager<IdentityUser<Guid>> userManager)
     {
-        var user = await userManager.FindByIdAsync(profileLinkingDto.UserId.ToString());
-        if (user == null) throw new NotImplementedException();
-
+        var user = await userManager.FindByIdAsync(profileLinkingDto.UserId.ToString()) ??
+                   throw new UserNotFoundException();
+        ;
         await userManager.AddClaimAsync(user,
             new Claim(JwtClaimTypes.CanInteractWithProfileClaim, profileLinkingDto.ProfileId.ToString()));
         return Ok();

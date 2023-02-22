@@ -15,7 +15,6 @@ public class TokenStateValidator : ITokenStateValidator
 
     public async Task<bool> IsTokenStateValid(Guid id)
     {
-        // TODO Might be a good idea to extend current user model to include fields like isLoginRequired
         return await _dbContext.RefreshTokens.AnyAsync(x => x.UserId == id);
     }
 }

@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using Innowise.Clinic.Auth.Dto;
+using Innowise.Clinic.Auth.Exceptions.CrossServiceCommunication;
 using Innowise.Clinic.Auth.Exceptions.UserManagement;
 using Innowise.Clinic.Auth.Persistence.Constants;
 using Innowise.Clinic.Auth.Services.Constants;
@@ -58,15 +59,14 @@ public class UserManagementService : IUserManagementService
 
         var accountLinkingDto =
             new UserProfileLinkingDto(user.Id, userCreationRequest.EntityId);
-
-        // TODO Might by worthy checking whether response status is successful
-        await new HttpClient().PostAsJsonAsync(ServicesRoutes.AccountProfileLinkingUrl, accountLinkingDto);
+        var profileLinkingResult =
+            await new HttpClient().PostAsJsonAsync(ServicesRoutes.AccountProfileLinkingUrl, accountLinkingDto);
+        if (!profileLinkingResult.IsSuccessStatusCode) throw new ProfileNotLinkedException();
     }
 
     public async Task<AuthTokenPairDto> SignInUserAsync(UserCredentialsDto patientCredentials)
     {
-        var user = await _userManager.FindByEmailAsync(patientCredentials.Email);
-        if (user == null) throw new UserNotFoundException();
+        var user = await _userManager.FindByEmailAsync(patientCredentials.Email) ?? throw new UserNotFoundException();
 
         if (_validationSettings.ValidateUserEmailConfirmedOnLogin && !user.EmailConfirmed)
             throw new EmailNotConfirmedException(
@@ -111,13 +111,8 @@ public class UserManagementService : IUserManagementService
     {
         var emailConfirmationTokenBytes = WebEncoders.Base64UrlDecode(emailConfirmationToken);
         emailConfirmationToken = Encoding.UTF8.GetString(emailConfirmationTokenBytes);
-
-        var user = await _userManager.FindByIdAsync(userId);
-
-        // TODO CHECK FOR NULL AND THROW CUSTOM EXCEPTION
-
+        var user = await _userManager.FindByIdAsync(userId) ?? throw new UserNotFoundException();
         var confirmation = await _userManager.ConfirmEmailAsync(user, emailConfirmationToken);
-
         if (!confirmation.Succeeded) throw new EmailConfirmationFailedException(confirmation.Errors);
     }
 
@@ -125,12 +120,9 @@ public class UserManagementService : IUserManagementService
     {
         var emailConfirmationToken =
             await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
         var tokenGeneratedBytes = Encoding.UTF8.GetBytes(emailConfirmationToken);
         var tokenEncoded = WebEncoders.Base64UrlEncode(tokenGeneratedBytes);
-
         var tokenConfirmationLink = ServicesRoutes.BuildEmailConfirmationLink(tokenEncoded, user.Id.ToString());
-
         return tokenConfirmationLink;
     }
 
