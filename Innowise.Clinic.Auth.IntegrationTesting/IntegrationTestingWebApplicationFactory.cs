@@ -125,10 +125,10 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
 
     private static int GetFreeTcpPort()
     {
-        var l = new TcpListener(IPAddress.Loopback, 0);
-        l.Start();
-        var port = ((IPEndPoint)l.LocalEndpoint).Port;
-        l.Stop();
+        var listener = new TcpListener(IPAddress.Loopback, 0);
+        listener.Start();
+        var port = ((IPEndPoint)listener.LocalEndpoint).Port;
+        listener.Stop();
         return port;
     }
 }
