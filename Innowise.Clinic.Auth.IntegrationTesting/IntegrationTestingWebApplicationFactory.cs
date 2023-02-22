@@ -79,8 +79,10 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
                 d => d.ServiceType ==
                      typeof(DbContextOptions<ClinicAuthDbContext>));
 
-            if (descriptor != null) services.Remove(descriptor);
-
+            if (descriptor != null)
+            {
+                services.Remove(descriptor);
+            }
 
             services.AddDbContext<ClinicAuthDbContext>(options =>
             {

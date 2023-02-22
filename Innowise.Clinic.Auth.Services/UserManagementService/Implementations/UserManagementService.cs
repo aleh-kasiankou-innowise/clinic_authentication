@@ -63,7 +63,10 @@ public class UserManagementService : IUserManagementService
             new UserProfileLinkingDto(user.Id, userCreationRequest.EntityId);
         var profileLinkingResult =
             await new HttpClient().PostAsJsonAsync(ServicesRoutes.AccountProfileLinkingUrl, accountLinkingDto);
-        if (!profileLinkingResult.IsSuccessStatusCode) throw new ProfileNotLinkedException();
+        if (!profileLinkingResult.IsSuccessStatusCode)
+        {
+            throw new ProfileNotLinkedException();
+        }
     }
 
     public async Task<AuthTokenPairDto> SignInUserAsync(UserCredentialsDto patientCredentials)
@@ -114,7 +117,10 @@ public class UserManagementService : IUserManagementService
         emailConfirmationToken = Encoding.UTF8.GetString(emailConfirmationTokenBytes);
         var user = await _userManager.FindByIdAsync(userId) ?? throw new UserNotFoundException();
         var confirmation = await _userManager.ConfirmEmailAsync(user, emailConfirmationToken);
-        if (!confirmation.Succeeded) throw new EmailConfirmationFailedException(confirmation.Errors);
+        if (!confirmation.Succeeded)
+        {
+            throw new EmailConfirmationFailedException(confirmation.Errors);
+        }
     }
 
     private async Task<string> PrepareEmailConfirmationLink(IdentityUser<Guid> user)
@@ -177,7 +183,10 @@ public class UserManagementService : IUserManagementService
     private async Task EnsureUserNotRegisteredAsync(string email)
     {
         var registeredUser = await _userManager.FindByEmailAsync(email);
-        if (registeredUser != null) throw new UserAlreadyRegisteredException();
+        if (registeredUser != null)
+        {
+            throw new UserAlreadyRegisteredException();
+        }
     }
 
     private IEnumerable<Claim> PrepareUserClaims(Guid profileId)

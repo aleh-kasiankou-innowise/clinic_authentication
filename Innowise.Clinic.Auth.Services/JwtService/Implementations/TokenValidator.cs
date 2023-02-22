@@ -60,14 +60,23 @@ public class TokenValidator : ITokenValidator
         var extractedTokenId = principal.FindFirstValue(JwtClaimTypes.TokenIdClaim);
         var associatedUserId = principal.FindFirstValue(JwtClaimTypes.UserIdClaim);
 
-        if (extractedTokenId == null) throw new TokenLacksTokenIdException();
-        if (associatedUserId == null) throw new TokenLacksUserIdException();
+        if (extractedTokenId == null)
+        {
+            throw new TokenLacksTokenIdException();
+        }
 
-        var tokenIsRegisteredInDb = await _dbContext.RefreshTokens.AnyAsync(x =>
+        if (associatedUserId == null)
+        {
+            throw new TokenLacksUserIdException();
+        }
+
+        var isTokenRegisteredInDb = await _dbContext.RefreshTokens.AnyAsync(x =>
             x.TokenId == Guid.Parse(extractedTokenId) &&
             x.UserId == Guid.Parse(associatedUserId));
-
-        if (!tokenIsRegisteredInDb) throw new UnknownRefreshTokenException();
+        if (!isTokenRegisteredInDb)
+        {
+            throw new UnknownRefreshTokenException();
+        }
     }
 
     private ClaimsPrincipal ValidateTokenAndReturnPrinciple(string token, bool validateExpirationDate)

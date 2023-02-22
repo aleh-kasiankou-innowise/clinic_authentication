@@ -11,7 +11,11 @@ public static class AuthTokenPairExtensions
     {
         var refreshToken = new JwtSecurityToken(tokens.RefreshToken);
         var tokenIdClaim = refreshToken.Claims.SingleOrDefault(x => x.Type == JwtClaimTypes.TokenIdClaim);
-        if (tokenIdClaim != null) return Guid.Parse(tokenIdClaim.Value);
+        if (tokenIdClaim != null)
+        {
+            return Guid.Parse(tokenIdClaim.Value);
+        }
+
         throw new PrincipalLacksTokenIdException();
     }
 
@@ -19,7 +23,11 @@ public static class AuthTokenPairExtensions
     {
         var refreshToken = new JwtSecurityToken(tokens.RefreshToken);
         var userIdClaim = refreshToken.Claims.SingleOrDefault(x => x.Type == JwtClaimTypes.UserIdClaim);
-        if (userIdClaim != null) return Guid.Parse(userIdClaim.Value);
+        if (userIdClaim != null)
+        {
+            return Guid.Parse(userIdClaim.Value);
+        }
+
         throw new TokenLacksUserIdException();
     }
 }

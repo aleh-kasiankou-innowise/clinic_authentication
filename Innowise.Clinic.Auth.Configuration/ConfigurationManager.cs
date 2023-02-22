@@ -113,7 +113,11 @@ public static class ConfigurationManager
         {
             var services = scope.ServiceProvider;
             var context = services.GetRequiredService<ClinicAuthDbContext>();
-            if ((await context.Database.GetPendingMigrationsAsync()).Any()) await context.Database.MigrateAsync();
+            if ((await context.Database.GetPendingMigrationsAsync()).Any())
+            {
+                await context.Database.MigrateAsync();
+            }
+
             var userManager = services.GetRequiredService<UserManager<IdentityUser<Guid>>>();
             await new DataSeeder(userManager).SeedUsers();
         }
