@@ -2,9 +2,9 @@ using System.Security.Claims;
 using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Exceptions.UserManagement;
 using Innowise.Clinic.Auth.Services.Constants.Jwt;
-using Innowise.Clinic.Auth.Services.JwtService.Data;
 using Innowise.Clinic.Auth.Services.JwtService.Interfaces;
 using Innowise.Clinic.Auth.Services.UserCredentialsGenerationService.Interfaces;
+using Innowise.Clinic.Auth.Services.UserManagementService.Data;
 using Innowise.Clinic.Auth.Services.UserManagementService.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,23 +16,24 @@ namespace Innowise.Clinic.Auth.Api.Controllers;
 [Route("[controller]")]
 public class HelperServicesController : ControllerBase
 {
+    private readonly AuthenticationRequirementsSettings _authenticationRequirements;
     private readonly IUserCredentialsGenerationService _passwordGenerator;
     private readonly IUserManagementService _userManagementService;
-    private readonly JwtValidationSettings _validationSettings;
 
     public HelperServicesController(IUserManagementService userManagementService,
-        IUserCredentialsGenerationService passwordGenerator, IOptions<JwtValidationSettings> validationSettings)
+        IUserCredentialsGenerationService passwordGenerator,
+        IOptions<AuthenticationRequirementsSettings> authRequirementsSettings)
     {
         _userManagementService = userManagementService;
         _passwordGenerator = passwordGenerator;
-        _validationSettings = validationSettings.Value;
+        _authenticationRequirements = authRequirementsSettings.Value;
     }
 
     [HttpPost("generate-credentials")]
     public async Task<IActionResult> CreateUser([FromBody] UserCreationRequestDto userCreationRequest)
     {
         var userCredentials =
-            _passwordGenerator.GenerateCredentials(_validationSettings.MaximalPasswordLength,
+            _passwordGenerator.GenerateCredentials(_authenticationRequirements.MaximalPasswordLength,
                 userCreationRequest.Email);
 
         await _userManagementService.RegisterConfirmedUserAsync(userCredentials, userCreationRequest);

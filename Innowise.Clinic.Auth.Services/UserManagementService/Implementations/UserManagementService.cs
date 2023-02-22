@@ -11,6 +11,7 @@ using Innowise.Clinic.Auth.Services.Extensions;
 using Innowise.Clinic.Auth.Services.JwtService.Data;
 using Innowise.Clinic.Auth.Services.JwtService.Interfaces;
 using Innowise.Clinic.Auth.Services.MailService.Interfaces;
+using Innowise.Clinic.Auth.Services.UserManagementService.Data;
 using Innowise.Clinic.Auth.Services.UserManagementService.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
@@ -21,6 +22,7 @@ namespace Innowise.Clinic.Auth.Services.UserManagementService.Implementations;
 
 public class UserManagementService : IUserManagementService
 {
+    private readonly AuthenticationRequirementsSettings _authenticationRequirementsSettings;
     private readonly IEmailHandler _emailHandler;
     private readonly SignInManager<IdentityUser<Guid>> _signInManager;
     private readonly ITokenService _tokenGenerator;
@@ -31,7 +33,8 @@ public class UserManagementService : IUserManagementService
 
     public UserManagementService(UserManager<IdentityUser<Guid>> userManager, IEmailHandler emailHandler,
         ITokenService tokenGenerator, SignInManager<IdentityUser<Guid>> signInManager, ITokenRevoker tokenRevoker,
-        ITokenValidator tokenValidator, IOptions<JwtValidationSettings> jwtValidationOptions)
+        ITokenValidator tokenValidator, IOptions<JwtValidationSettings> jwtValidationOptions,
+        IOptions<AuthenticationRequirementsSettings> authenticationRequirementsSettings)
     {
         _userManager = userManager;
         _emailHandler = emailHandler;
@@ -40,6 +43,7 @@ public class UserManagementService : IUserManagementService
         _tokenRevoker = tokenRevoker;
         _tokenValidator = tokenValidator;
         _validationSettings = jwtValidationOptions.Value;
+        _authenticationRequirementsSettings = authenticationRequirementsSettings.Value;
     }
 
     public async Task RegisterPatientAsync(UserCredentialsDto patientCredentials)
@@ -68,7 +72,7 @@ public class UserManagementService : IUserManagementService
     {
         var user = await _userManager.FindByEmailAsync(patientCredentials.Email) ?? throw new UserNotFoundException();
 
-        if (_validationSettings.ValidateUserEmailConfirmedOnLogin && !user.EmailConfirmed)
+        if (_authenticationRequirementsSettings.ValidateUserEmailConfirmedOnLogin && !user.EmailConfirmed)
             throw new EmailNotConfirmedException(
                 "Please confirm your email. The confirmation link has been sent to your e-mail.");
 

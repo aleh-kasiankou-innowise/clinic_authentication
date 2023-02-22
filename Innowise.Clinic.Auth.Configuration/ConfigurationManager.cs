@@ -12,6 +12,7 @@ using Innowise.Clinic.Auth.Services.MailService.Implementations;
 using Innowise.Clinic.Auth.Services.MailService.Interfaces;
 using Innowise.Clinic.Auth.Services.UserCredentialsGenerationService.Implementations;
 using Innowise.Clinic.Auth.Services.UserCredentialsGenerationService.Interfaces;
+using Innowise.Clinic.Auth.Services.UserManagementService.Data;
 using Innowise.Clinic.Auth.Services.UserManagementService.Implementations;
 using Innowise.Clinic.Auth.Services.UserManagementService.Interfaces;
 using Innowise.Clinic.Auth.Validators.Custom;
@@ -37,9 +38,10 @@ public static class ConfigurationManager
     {
         var jwtConfiguration = configuration.GetSection("JWT");
         var jwtValidationConfiguration = configuration.GetSection("JwtValidationConfiguration");
+        var authenticationConfiguration = configuration.GetSection("AuthenticationRequirements");
 
         services.AddAuthentication();
-        services.ConfigureIdentity(jwtValidationConfiguration);
+        services.ConfigureIdentity(authenticationConfiguration);
         services.ConfigureJwtAuthentication(jwtConfiguration, jwtValidationConfiguration);
         services.ConfigureCustomValidators();
         services.AddSingleton<AuthenticationExceptionHandlingMiddleware>();
@@ -97,6 +99,9 @@ public static class ConfigurationManager
         var jwtConfiguration = configuration.GetSection("JWT");
         var jwtValidationConfiguration = configuration.GetSection("JwtValidationConfiguration");
         var smtpConfiguration = configuration.GetSection("AuthSmtp");
+        var authenticationRequirementsConfiguration = configuration.GetSection("AuthenticationRequirements");
+
+        services.Configure<AuthenticationRequirementsSettings>(authenticationRequirementsConfiguration);
         services.Configure<JwtSettings>(jwtConfiguration);
         services.Configure<SmtpSettings>(smtpConfiguration);
         services.Configure<JwtValidationSettings>(jwtValidationConfiguration);
@@ -120,19 +125,20 @@ public static class ConfigurationManager
     }
 
     private static IServiceCollection ConfigureIdentity(this IServiceCollection services,
-        IConfigurationSection jwtValidationConfiguration)
+        IConfigurationSection passwordValidationConfiguration)
     {
         services.AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>(options =>
             {
                 options.Password.RequireDigit =
-                    Convert.ToBoolean(jwtValidationConfiguration["RequireDigitsInPassword"]);
-                options.Password.RequiredLength = Convert.ToInt32(jwtValidationConfiguration["MinimalPasswordLength"]);
+                    Convert.ToBoolean(passwordValidationConfiguration["RequireDigitsInPassword"]);
+                options.Password.RequiredLength =
+                    Convert.ToInt32(passwordValidationConfiguration["MinimalPasswordLength"]);
                 options.Password.RequireLowercase =
-                    Convert.ToBoolean(jwtValidationConfiguration["RequireLowercaseLettersInPassword"]);
+                    Convert.ToBoolean(passwordValidationConfiguration["RequireLowercaseLettersInPassword"]);
                 options.Password.RequireNonAlphanumeric =
-                    Convert.ToBoolean(jwtValidationConfiguration["RequireNonAlphanumericInPassword"]);
+                    Convert.ToBoolean(passwordValidationConfiguration["RequireNonAlphanumericInPassword"]);
                 options.Password.RequireUppercase =
-                    Convert.ToBoolean(jwtValidationConfiguration["RequireUppercaseLettersInPassword"]);
+                    Convert.ToBoolean(passwordValidationConfiguration["RequireUppercaseLettersInPassword"]);
             })
             .AddEntityFrameworkStores<ClinicAuthDbContext>()
             .AddDefaultTokenProviders()

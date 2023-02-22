@@ -40,6 +40,7 @@ public class DataSeeder
             if (await _userManager.FindByEmailAsync(user.Email) == null)
             {
                 await _userManager.CreateAsync(user, "securePassword");
+
                 var lowerCaseRole = user.Email.Split("@")[0];
                 var capitalizedRole = lowerCaseRole[0]
                     .ToString()

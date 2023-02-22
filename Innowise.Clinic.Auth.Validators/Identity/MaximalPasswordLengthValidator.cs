@@ -10,17 +10,18 @@ public class MaximalPasswordLengthValidator<TUser> : IPasswordValidator<TUser>
 
     public MaximalPasswordLengthValidator(IConfiguration configuration)
     {
-        var validationParams = configuration.GetSection("JwtValidationConfiguration");
+        var validationParams = configuration.GetSection("AuthenticationRequirements");
         _maximalPasswordLength = Convert.ToInt32(validationParams["MaximalPasswordLength"]);
     }
 
     public async Task<IdentityResult> ValidateAsync(UserManager<TUser> manager, TUser user, string password)
     {
-        if (password.Length > _maximalPasswordLength)
+        var passLength = password.Length;
+        if (passLength > _maximalPasswordLength)
             return await Task.FromResult(IdentityResult.Failed(new IdentityError
             {
                 Code = "PasswordLength",
-                Description = "The password should contain 6 to 15 symbols"
+                Description = $"The password should contain 6 to 15 symbols. Current length: {passLength}"
             }));
 
         return await Task.FromResult(IdentityResult.Success);
