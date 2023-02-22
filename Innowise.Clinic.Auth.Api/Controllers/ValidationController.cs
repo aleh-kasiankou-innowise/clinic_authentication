@@ -1,3 +1,4 @@
+using Innowise.Clinic.Auth.Api.Controllers.Abstractions;
 using Innowise.Clinic.Auth.Validators.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,9 +8,7 @@ namespace Innowise.Clinic.Auth.Api.Controllers;
 ///     Validation controller.
 ///     It checks whether the provided email is already registered in the system.
 /// </summary>
-[ApiController]
-[Route("[controller]")]
-public class ValidationController : ControllerBase
+public class ValidationController : ApiControllerBase
 {
     private const string EmailIsRegisteredMessage =
         "The account with the provided email is already registered in the system";

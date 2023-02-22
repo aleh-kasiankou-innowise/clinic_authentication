@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Innowise.Clinic.Auth.Api.Controllers.Abstractions;
 using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Exceptions.UserManagement;
 using Innowise.Clinic.Auth.Services.Constants.Jwt;
@@ -12,9 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace Innowise.Clinic.Auth.Api.Controllers;
 
-[ApiController]
-[Route("[controller]")]
-public class HelperServicesController : ControllerBase
+public class HelperServicesController : ApiControllerBase
 {
     private readonly AuthenticationRequirementsSettings _authenticationRequirements;
     private readonly IUserCredentialsGenerationService _passwordGenerator;
