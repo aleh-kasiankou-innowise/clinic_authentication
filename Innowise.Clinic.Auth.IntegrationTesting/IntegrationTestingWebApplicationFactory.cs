@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using Innowise.Clinic.Auth.Api;
-using Innowise.Clinic.Auth.Jwt;
-using Innowise.Clinic.Auth.Mail;
 using Innowise.Clinic.Auth.Persistence;
+using Innowise.Clinic.Auth.Services.JwtService.Data;
+using Innowise.Clinic.Auth.Services.MailService.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +34,7 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
 
     public IntegrationTestingWebApplicationFactory()
     {
+        Environment.SetEnvironmentVariable("GATEWAY_URL", "No gateway for testing");
         _dbContainer = PrepareDbContainer();
         _mailContainer = PrepareMailContainer();
     }

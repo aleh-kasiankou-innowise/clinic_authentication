@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="Microsoft.AspNetCore.Authentication.JwtBearer">
+            <HintPath>..\..\..\..\..\.nuget\packages\microsoft.aspnetcore.authentication.jwtbearer\6.0.13\lib\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+            <HintPath>..\..\..\..\..\..\..\usr\lib\dotnet\shared\Microsoft.AspNetCore.App\6.0.13\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Extensions.Identity.Core">
+            <HintPath>..\..\..\..\..\.nuget\packages\microsoft.extensions.identity.core\6.0.13\lib\net6.0\Microsoft.Extensions.Identity.Core.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Extensions.Identity.Stores">
+            <HintPath>..\..\..\..\..\.nuget\packages\microsoft.extensions.identity.stores\6.0.13\lib\net6.0\Microsoft.Extensions.Identity.Stores.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.OpenApi">
+            <HintPath>..\..\..\..\..\.nuget\packages\microsoft.openapi\1.5.0\lib\netstandard2.0\Microsoft.OpenApi.dll</HintPath>
+        </Reference>
+        <Reference Include="Swashbuckle.AspNetCore.SwaggerGen">
+            <HintPath>..\..\..\..\..\.nuget\packages\swashbuckle.aspnetcore.swaggergen\6.5.0\lib\net6.0\Swashbuckle.AspNetCore.SwaggerGen.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Innowise.Clinic.Auth.RequestPipeline\Innowise.Clinic.Auth.RequestPipeline.csproj"/>
+        <ProjectReference Include="..\Innowise.Clinic.Auth.Services\Innowise.Clinic.Auth.Services.csproj"/>
+        <ProjectReference Include="..\Innowise.Clinic.Auth.Validators\Innowise.Clinic.Auth.Validators.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.14"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="6.1.0"/>
+    </ItemGroup>
+
+</Project>

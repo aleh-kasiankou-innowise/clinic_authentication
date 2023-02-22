@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <NoWarn>1591</NoWarn>
+        <LangVersion>10</LangVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -33,14 +34,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Innowise.Clinic.Auth.DependencyConfiguration\Innowise.Clinic.Auth.DependencyConfiguration.csproj"/>
-        <ProjectReference Include="..\Innowise.Clinic.Auth.Extensions\Innowise.Clinic.Auth.Extensions.csproj"/>
+        <ProjectReference Include="..\Innowise.Clinic.Auth.Configuration\Innowise.Clinic.Auth.Configuration.csproj"/>
         <ProjectReference Include="..\Innowise.Clinic.Auth.Dto\Innowise.Clinic.Auth.Dto.csproj"/>
-        <ProjectReference Include="..\Innowise.Clinic.Auth.Filters\Innowise.Clinic.Auth.Filters.csproj"/>
-        <ProjectReference Include="..\Innowise.Clinic.Auth.Mail\Innowise.Clinic.Auth.Mail.csproj"/>
-        <ProjectReference Include="..\Innowise.Clinic.Auth.Middleware\Innowise.Clinic.Auth.Middleware.csproj"/>
+        <ProjectReference Include="..\Innowise.Clinic.Auth.RequestPipeline\Innowise.Clinic.Auth.RequestPipeline.csproj"/>
         <ProjectReference Include="..\Innowise.Clinic.Auth.Persistence\Innowise.Clinic.Auth.Persistence.csproj"/>
-        <ProjectReference Include="..\Innowise.Clinic.Auth.UserManagement\Innowise.Clinic.Auth.UserManagement.csproj"/>
+        <ProjectReference Include="..\Innowise.Clinic.Auth.Services\Innowise.Clinic.Auth.Services.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

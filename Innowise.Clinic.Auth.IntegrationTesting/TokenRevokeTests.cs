@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Innowise.Clinic.Auth.Dto;
-using Innowise.Clinic.Auth.Extensions;
+using Innowise.Clinic.Auth.Services.Extensions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
@@ -29,7 +29,7 @@ public class TokenRevokeTests : IClassFixture<IntegrationTestingWebApplicationFa
     {
         // Arrange
 
-        var validUserRegistrationData = new PatientCredentialsDto
+        var validUserRegistrationData = new UserCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.com",
             Password = "12345678"
@@ -37,9 +37,8 @@ public class TokenRevokeTests : IClassFixture<IntegrationTestingWebApplicationFa
 
         // Act
 
-        var response = await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, validUserRegistrationData);
-        var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
-        response = await _httpClient.PostAsJsonAsync(TestHelper.SignOutEndpointUri, generatedTokens);
+        var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
+        var response = await _httpClient.PostAsJsonAsync(TestHelper.SignOutEndpointUri, generatedTokens);
 
         // Assert
 
@@ -53,7 +52,7 @@ public class TokenRevokeTests : IClassFixture<IntegrationTestingWebApplicationFa
     {
         // Arrange
 
-        var validUserRegistrationData = new PatientCredentialsDto
+        var validUserRegistrationData = new UserCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.com",
             Password = "12345678"
@@ -61,9 +60,8 @@ public class TokenRevokeTests : IClassFixture<IntegrationTestingWebApplicationFa
 
         // Act
 
-        var response = await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, validUserRegistrationData);
-        var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
-        response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri, generatedTokens);
+        var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
+        var response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri, generatedTokens);
 
         // Assert
         Assert.False(response.IsSuccessStatusCode);
@@ -75,13 +73,13 @@ public class TokenRevokeTests : IClassFixture<IntegrationTestingWebApplicationFa
     {
         // Arrange
 
-        var validUserRegistrationData = new PatientCredentialsDto
+        var validUserRegistrationData = new UserCredentialsDto
         {
             Email = $"test{TestHelper.UniqueNumber}@test.com",
             Password = "12345678"
         };
 
-        var invalidUserCredentials = new PatientCredentialsDto
+        var invalidUserCredentials = new UserCredentialsDto
         {
             Email = validUserRegistrationData.Email,
             Password = "87654321"
@@ -89,9 +87,8 @@ public class TokenRevokeTests : IClassFixture<IntegrationTestingWebApplicationFa
 
         // Act
 
-        var response = await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, validUserRegistrationData);
-        var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
-        response = await _httpClient.PostAsJsonAsync(TestHelper.SignInEndpointUri, invalidUserCredentials);
+        var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
+        var response = await _httpClient.PostAsJsonAsync(TestHelper.SignInEndpointUri, invalidUserCredentials);
 
         // Assert
         Assert.False(response.IsSuccessStatusCode);
