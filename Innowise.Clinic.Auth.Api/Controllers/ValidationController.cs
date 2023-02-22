@@ -14,13 +14,11 @@ public class ValidationController : ApiControllerBase
         "The account with the provided email is already registered in the system";
 
     private readonly IEmailValidator _emailValidator;
-    private readonly ITokenStateValidator _tokenStateValidator;
 
     /// <inheritdoc />
-    public ValidationController(IEmailValidator emailValidator, ITokenStateValidator tokenStateValidator)
+    public ValidationController(IEmailValidator emailValidator)
     {
         _emailValidator = emailValidator;
-        _tokenStateValidator = tokenStateValidator;
     }
 
     /// <summary>Checks whether the provided email is already registered in the system.</summary>
@@ -40,19 +38,5 @@ public class ValidationController : ApiControllerBase
         return isValidationSucceeded
             ? Ok()
             : BadRequest(EmailIsRegisteredMessage);
-    }
-
-    /// <summary>Checks whether the user tokens are revoked.</summary>
-    /// <param name="id">The id of the user who is to be checked.</param>
-    /// <returns>
-    ///     Successful status code (200) if the provided email is unique.
-    /// </returns>
-    /// <response code="200">Success. The validation result is returned.</response>
-    [HttpGet("user-tokens/{id:guid}")]
-    [ProducesResponseType(typeof(void), 200)]
-    [ProducesResponseType(typeof(void), 400)]
-    public async Task<bool> CheckIfTokenRevoked([FromRoute] Guid id)
-    {
-        return await _tokenStateValidator.IsTokenStateValid(id);
     }
 }

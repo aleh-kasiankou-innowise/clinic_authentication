@@ -7,6 +7,7 @@ using Innowise.Clinic.Auth.Services.JwtService.Interfaces;
 using Innowise.Clinic.Auth.Services.UserCredentialsGenerationService.Interfaces;
 using Innowise.Clinic.Auth.Services.UserManagementService.Data;
 using Innowise.Clinic.Auth.Services.UserManagementService.Interfaces;
+using Innowise.Clinic.Auth.Validators.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -57,5 +58,20 @@ public class HelperServicesController : ApiControllerBase
     {
         await tokenRevoker.RevokeAllUserTokensAsync(userId);
         return Ok();
+    }
+
+    /// <summary>Checks whether the user tokens are revoked.</summary>
+    /// <param name="id">The id of the user who is to be checked.</param>
+    /// <returns>
+    ///     Successful status code (200) if the provided email is unique.
+    /// </returns>
+    /// <response code="200">Success. The validation result is returned.</response>
+    [HttpPost("user-tokens")]
+    [ProducesResponseType(typeof(void), 200)]
+    [ProducesResponseType(typeof(void), 400)]
+    public async Task<bool> CheckIfTokenRevoked([FromBody] Guid id,
+        [FromServices] ITokenStateValidator tokenStateValidator)
+    {
+        return await tokenStateValidator.IsTokenStateValid(id);
     }
 }
