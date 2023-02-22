@@ -17,31 +17,24 @@ public class AuthenticationExceptionHandlingMiddleware : IMiddleware
         {
             await next(context);
         }
-
         catch (AuthenticationException e)
         {
             context.Response.StatusCode = e.StatusCode;
             await WriteExceptionMessageToResponse(e.Message, context);
         }
-
         catch (SecurityTokenValidationException e)
         {
             context.Response.StatusCode = 401;
             await WriteExceptionMessageToResponse(e.Message, context);
         }
-
         catch (ApplicationException e)
         {
             context.Response.StatusCode = 400;
             await WriteExceptionMessageToResponse(e.Message, context);
         }
-
         catch (Exception e)
         {
             context.Response.StatusCode = 500;
-
-            Console.WriteLine(e);
-
             await WriteExceptionMessageToResponse(DefaultUnhandledErrorMessage, context);
         }
     }

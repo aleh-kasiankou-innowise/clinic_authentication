@@ -19,7 +19,6 @@ public class AuthenticationController : ApiControllerBase
 {
     private readonly IUserManagementService _userManagementService;
 
-
     /// <inheritdoc />
     public AuthenticationController(IUserManagementService userManagementService)
     {
@@ -42,7 +41,6 @@ public class AuthenticationController : ApiControllerBase
         await _userManagementService.RegisterPatientAsync(patientCredentials);
         return Ok("The email confirmation link has been sent to your email address!");
     }
-
 
     /// <summary>Signs in the registered user.</summary>
     /// <param name="userCredentials">The user's email and the password.</param>

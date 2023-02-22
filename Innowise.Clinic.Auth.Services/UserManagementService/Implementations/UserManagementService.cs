@@ -49,9 +49,7 @@ public class UserManagementService : IUserManagementService
     public async Task RegisterPatientAsync(UserCredentialsDto patientCredentials)
     {
         var registeredUser = await RegisterNewPatientAsync(patientCredentials);
-
         var emailConfirmationLink = await PrepareEmailConfirmationLink(registeredUser);
-
         await _emailHandler.SendEmailConfirmationLinkAsync(registeredUser.Email, emailConfirmationLink);
     }
 
@@ -78,7 +76,6 @@ public class UserManagementService : IUserManagementService
 
         var isSignInSucceeded =
             await _signInManager.UserManager.CheckPasswordAsync(user, patientCredentials.Password);
-
         if (!isSignInSucceeded)
         {
             await _tokenRevoker.RevokeAllUserTokensAsync(user.Id);
@@ -142,7 +139,6 @@ public class UserManagementService : IUserManagementService
         };
 
         var signUpResult = await _userManager.CreateAsync(user, patientCredentials.Password);
-
         if (signUpResult.Succeeded)
         {
             await _userManager.AddToRoleAsync(user, UserRoles.Patient);

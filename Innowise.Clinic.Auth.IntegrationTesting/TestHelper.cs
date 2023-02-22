@@ -22,7 +22,6 @@ internal static class TestHelper
     internal const string SignOutEndpointUri = "authentication/sign-out";
 
     private static int _uniqueNumber;
-
     internal static int UniqueNumber => _uniqueNumber++;
 
 
@@ -45,9 +44,7 @@ internal static class TestHelper
             ValidateLifetime = Convert.ToBoolean(factory.UseConfiguration(x =>
                 x.GetValue<string>("JwtValidationConfiguration:ValidateLifetime")))
         };
-
         var tokenHandler = new JwtSecurityTokenHandler();
-
         return tokenHandler.ValidateToken(token, jwtTokenValidationParameters,
             out _);
     }

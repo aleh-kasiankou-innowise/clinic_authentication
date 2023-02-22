@@ -56,7 +56,6 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         var userId = TestHelper.ExtractUserIdFromJwtToken(generatedTokens.SecurityToken);
         var refreshTokenId = TestHelper.ExtractRefreshTokenId(generatedTokens.RefreshToken);
 
-
         Assert.True(_factory.UseDbContext(x => x.RefreshTokens
             .Any(rt => rt.TokenId == refreshTokenId && rt.UserId == userId)));
     }
@@ -67,7 +66,6 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         // Arrange
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
-
         var validUserRegistrationData = new UserCredentialsDto
         {
             Email = validEmail,
@@ -77,9 +75,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         // Act
 
         var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
-
         await Task.Delay(_jwtData.Value.TokenValidityInSeconds * 1000);
-
         var response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri, generatedTokens);
         var refreshedToken = await response.Content.ReadFromJsonAsync<string>();
 
@@ -95,7 +91,6 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         // Arrange
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
-
         var validUserRegistrationData = new UserCredentialsDto
         {
             Email = validEmail,
@@ -117,7 +112,6 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         // Arrange
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
-
         var validUserRegistrationData = new UserCredentialsDto
         {
             Email = validEmail,
@@ -127,7 +121,6 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         // Act
 
         var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
-
         var invalidJwtToken = new JwtSecurityToken(
             _factory.UseConfiguration(x => x.GetValue<string>("JWT:ValidIssuer")),
             expires: DateTime.UtcNow - TimeSpan.FromHours(1),
@@ -138,7 +131,6 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         );
 
         var invalidTokenJson = new JwtSecurityTokenHandler().WriteToken(invalidJwtToken);
-
         var response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri,
             new AuthTokenPairDto(invalidTokenJson, generatedTokens.RefreshToken));
 
@@ -154,7 +146,6 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         // Arrange
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
-
         var validUserRegistrationData = new UserCredentialsDto
         {
             Email = validEmail,
@@ -164,8 +155,6 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         // Act
 
         var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
-
-
         var invalidJwtToken = new JwtSecurityToken(
             "WrongIssuer",
             expires: DateTime.UtcNow - TimeSpan.FromHours(1),
@@ -176,7 +165,6 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         );
 
         var invalidTokenJson = new JwtSecurityTokenHandler().WriteToken(invalidJwtToken);
-
         var response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri,
             new AuthTokenPairDto(invalidTokenJson, generatedTokens.RefreshToken));
 
@@ -201,8 +189,6 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         // Act
 
         var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
-
-
         var invalidRefreshToken = new JwtSecurityToken(
             _factory.UseConfiguration(x => x.GetValue<string>("JWT:ValidIssuer")),
             expires: DateTime.UtcNow - TimeSpan.FromHours(1),
@@ -211,11 +197,9 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
                 SecurityAlgorithms.HmacSha256),
             claims: TestHelper.ValidateJwtToken(_factory, generatedTokens.RefreshToken).Claims
         );
-
         var invalidTokenJson = new JwtSecurityTokenHandler().WriteToken(invalidRefreshToken);
 
         await Task.Delay(_jwtData.Value.TokenValidityInSeconds * 1000);
-
         var response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri,
             new AuthTokenPairDto(generatedTokens.SecurityToken, invalidTokenJson));
 
@@ -231,7 +215,6 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         // Arrange
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
-
         var validUserRegistrationData = new UserCredentialsDto
         {
             Email = validEmail,
@@ -241,7 +224,6 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         // Act
 
         var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
-
         var invalidRefreshToken = new JwtSecurityToken(
             "WrongIssuee",
             expires: DateTime.UtcNow - TimeSpan.FromHours(1),
@@ -250,11 +232,9 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
                 SecurityAlgorithms.HmacSha256),
             claims: TestHelper.ValidateJwtToken(_factory, generatedTokens.RefreshToken).Claims
         );
-
         var invalidTokenJson = new JwtSecurityTokenHandler().WriteToken(invalidRefreshToken);
 
         await Task.Delay(_jwtData.Value.TokenValidityInSeconds * 1000);
-
         var response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri,
             new AuthTokenPairDto(generatedTokens.SecurityToken, invalidTokenJson));
 

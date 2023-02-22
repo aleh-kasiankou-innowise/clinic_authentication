@@ -22,10 +22,8 @@ public class EmailHandler : IEmailHandler
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(_smtpSettings.Value.AuthenticationEmailSenderName,
             _smtpSettings.Value.AuthenticationEmailSenderAddress));
-
         message.To.Add(new MailboxAddress(mailRecipientMailAddress, mailRecipientMailAddress));
         message.Subject = mailSubject;
-
         message.Body = new TextPart("html")
         {
             Text = mailBody

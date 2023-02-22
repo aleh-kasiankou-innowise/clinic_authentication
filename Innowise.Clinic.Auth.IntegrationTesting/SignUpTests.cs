@@ -23,7 +23,6 @@ public class SignUpTests : IClassFixture<IntegrationTestingWebApplicationFactory
         {
             AllowAutoRedirect = false
         });
-
         _patientRoleId = _factory.UseDbContext(x => x.Roles.Single(r => r.Name == UserRoles.Patient).Id);
     }
 
@@ -116,7 +115,6 @@ public class SignUpTests : IClassFixture<IntegrationTestingWebApplicationFactory
         Assert.False(_factory.UseDbContext(x => x.Users
             .Any(u => u.Email == userRegistrationDataWithLongPassword.Email)));
     }
-
 
     [Fact]
     public async Task TestPatientWithNonUniqueEmailAndValidPasswordRegistered_Fail()

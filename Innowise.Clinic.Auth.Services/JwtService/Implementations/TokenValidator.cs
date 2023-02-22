@@ -31,9 +31,7 @@ public class TokenValidator : ITokenValidator
         bool tokenShouldBeExpired)
     {
         var principal = ExtractPrincipalFromJwtToken(authTokens.SecurityToken, tokenShouldBeExpired);
-
         await ValidateRefreshTokenAsync(authTokens.RefreshToken);
-
         return principal;
     }
 
@@ -46,7 +44,6 @@ public class TokenValidator : ITokenValidator
                 throw new JwtTokenNotExpiredException();
 
             var principal = ValidateTokenAndReturnPrinciple(token, false);
-
             return principal;
         }
 
@@ -70,7 +67,6 @@ public class TokenValidator : ITokenValidator
             x.TokenId == Guid.Parse(extractedTokenId) &&
             x.UserId == Guid.Parse(associatedUserId));
 
-
         if (!tokenIsRegisteredInDb) throw new UnknownRefreshTokenException();
     }
 
@@ -88,10 +84,8 @@ public class TokenValidator : ITokenValidator
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
-
         var principal = tokenHandler.ValidateToken(token, jwtTokenValidationParameters,
             out _);
-
         return principal;
     }
 }

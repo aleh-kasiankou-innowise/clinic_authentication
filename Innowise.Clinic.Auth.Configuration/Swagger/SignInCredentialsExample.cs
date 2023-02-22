@@ -12,13 +12,11 @@ public class SignInCredentialsExample : IMultipleExamplesProvider<UserCredential
             Email = "patient@clinic.com",
             Password = "securePassword"
         });
-
         yield return SwaggerExample.Create("Doctor", new UserCredentialsDto
         {
             Email = "doctor@clinic.com",
             Password = "securePassword"
         });
-
         yield return SwaggerExample.Create("Receptionist", new UserCredentialsDto
         {
             Email = "receptionist@clinic.com",

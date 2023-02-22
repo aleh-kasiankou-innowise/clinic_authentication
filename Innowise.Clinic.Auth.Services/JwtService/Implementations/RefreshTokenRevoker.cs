@@ -50,7 +50,6 @@ public class RefreshTokenRevoker : ITokenRevoker
     public async Task RevokeAllRefreshTokensAsync()
     {
         var modelEntityType = _dbContext.Model.FindEntityType(typeof(RefreshToken));
-
         var tableName = modelEntityType?.GetSchemaQualifiedTableName() ??
                         throw new InvalidOperationException("The required table doesn't exist");
 
@@ -60,7 +59,6 @@ public class RefreshTokenRevoker : ITokenRevoker
     public void RevokeAllRefreshTokens()
     {
         var modelEntityType = _dbContext.Model.FindEntityType(typeof(RefreshToken));
-
         var tableName = modelEntityType?.GetSchemaQualifiedTableName() ??
                         throw new InvalidOperationException("The required table doesn't exist");
 

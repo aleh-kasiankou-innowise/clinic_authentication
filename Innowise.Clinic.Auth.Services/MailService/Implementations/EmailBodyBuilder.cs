@@ -10,7 +10,6 @@ public static class EmailBodyBuilder
     {
         var stringBuilder = new StringBuilder(EmailTemplates.EmailConfirmation);
         stringBuilder.Replace(EmailVariables.EmailConfirmationLink, emailConfirmationLink);
-
         return stringBuilder.ToString();
     }
 
