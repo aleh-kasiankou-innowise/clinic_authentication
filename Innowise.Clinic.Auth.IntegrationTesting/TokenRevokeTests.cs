@@ -37,9 +37,8 @@ public class TokenRevokeTests : IClassFixture<IntegrationTestingWebApplicationFa
 
         // Act
 
-        var response = await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, validUserRegistrationData);
-        var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
-        response = await _httpClient.PostAsJsonAsync(TestHelper.SignOutEndpointUri, generatedTokens);
+        var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
+        var response = await _httpClient.PostAsJsonAsync(TestHelper.SignOutEndpointUri, generatedTokens);
 
         // Assert
 
@@ -61,9 +60,8 @@ public class TokenRevokeTests : IClassFixture<IntegrationTestingWebApplicationFa
 
         // Act
 
-        var response = await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, validUserRegistrationData);
-        var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
-        response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri, generatedTokens);
+        var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
+        var response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri, generatedTokens);
 
         // Assert
         Assert.False(response.IsSuccessStatusCode);
@@ -89,9 +87,8 @@ public class TokenRevokeTests : IClassFixture<IntegrationTestingWebApplicationFa
 
         // Act
 
-        var response = await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, validUserRegistrationData);
-        var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
-        response = await _httpClient.PostAsJsonAsync(TestHelper.SignInEndpointUri, invalidUserCredentials);
+        var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
+        var response = await _httpClient.PostAsJsonAsync(TestHelper.SignInEndpointUri, invalidUserCredentials);
 
         // Assert
         Assert.False(response.IsSuccessStatusCode);

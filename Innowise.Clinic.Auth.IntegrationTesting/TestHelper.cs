@@ -1,8 +1,13 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
+using Innowise.Clinic.Auth.Dto;
+using Innowise.Clinic.Auth.Exceptions.Testing;
 using Innowise.Clinic.Auth.Services.Constants.Jwt;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -59,5 +64,15 @@ internal static class TestHelper
         var refreshJwtToken = new JwtSecurityToken(refreshToken);
         var tokenId = refreshJwtToken.Claims.First(x => x.Type == JwtClaimTypes.TokenIdClaim).Value;
         return Guid.Parse(tokenId);
+    }
+
+    internal static async Task<AuthTokenPairDto> RegisterUserAndGetTokens(HttpClient httpClient,
+        UserCredentialsDto userCredentials)
+    {
+        await httpClient.PostAsJsonAsync(SignUpEndpointUri, userCredentials);
+        var loginResult = await httpClient.PostAsJsonAsync(SignInEndpointUri,
+            userCredentials);
+        var generatedTokens = await loginResult.Content.ReadFromJsonAsync<AuthTokenPairDto>();
+        return generatedTokens ?? throw new TokensNotReturnedException();
     }
 }

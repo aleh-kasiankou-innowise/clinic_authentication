@@ -46,12 +46,6 @@ public class SignUpTests : IClassFixture<IntegrationTestingWebApplicationFactory
 
         Assert.True(response.IsSuccessStatusCode);
         Assert.True(_factory.UseDbContext(x => x.Users.Any(u => u.Email == validUserRegistrationData.Email)));
-
-        var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
-        var userId = TestHelper.ExtractUserIdFromJwtToken(generatedTokens.SecurityToken);
-
-        Assert.True(_factory.UseDbContext(x => x.UserRoles
-            .Any(ur => ur.RoleId == _patientRoleId && ur.UserId == userId)));
     }
 
     [Fact]

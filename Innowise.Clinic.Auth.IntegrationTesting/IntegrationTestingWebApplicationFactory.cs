@@ -34,6 +34,7 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
 
     public IntegrationTestingWebApplicationFactory()
     {
+        Environment.SetEnvironmentVariable("GATEWAY_URL", "No gateway for testing");
         _dbContainer = PrepareDbContainer();
         _mailContainer = PrepareMailContainer();
     }

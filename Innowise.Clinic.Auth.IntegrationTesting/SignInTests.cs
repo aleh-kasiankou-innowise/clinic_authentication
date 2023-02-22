@@ -33,20 +33,12 @@ public class SignInTests : IClassFixture<IntegrationTestingWebApplicationFactory
             Password = "12345678"
         };
 
-        await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, validUserRegistrationData);
-
         // Act
 
-        var response = await _httpClient.PostAsJsonAsync(TestHelper.SignInEndpointUri, validUserRegistrationData);
-
+        var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
 
         // Assert
 
-        Assert.True(response.IsSuccessStatusCode);
-        var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
-
-
-        Assert.NotNull(generatedTokens);
         Assert.NotNull(generatedTokens.SecurityToken);
         Assert.NotNull(generatedTokens.RefreshToken);
 
@@ -66,12 +58,11 @@ public class SignInTests : IClassFixture<IntegrationTestingWebApplicationFactory
             Password = "12345678"
         };
 
-        await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, validUserRegistrationData);
-
         var invalidUserCredentials = validUserRegistrationData with { Password = "87654321" };
 
         // Act
 
+        await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, validUserRegistrationData);
         var response = await _httpClient.PostAsJsonAsync(TestHelper.SignInEndpointUri, invalidUserCredentials);
         var responseMessage = await response.Content.ReadFromJsonAsync<string>();
 

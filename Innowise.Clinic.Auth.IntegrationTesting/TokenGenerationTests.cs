@@ -47,15 +47,9 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         // Act
 
-        var response = await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, validUserRegistrationData);
+        var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
 
         // Assert
-
-        Assert.True(response.IsSuccessStatusCode);
-
-        var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
-
-        Assert.NotNull(generatedTokens);
         Assert.NotNull(generatedTokens.SecurityToken);
         Assert.NotNull(generatedTokens.RefreshToken);
 
@@ -74,7 +68,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new UserCredentialsDto
+        var validUserRegistrationData = new UserCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"
@@ -82,14 +76,13 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         // Act
 
-        var response =
-            await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, userRegistrationDataWithRegisteredEmail);
-        var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
+        var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
 
         await Task.Delay(_jwtData.Value.TokenValidityInSeconds * 1000);
 
-        response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri, generatedTokens);
+        var response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri, generatedTokens);
         var refreshedToken = await response.Content.ReadFromJsonAsync<string>();
+
         // Assert
 
         Assert.True(response.IsSuccessStatusCode);
@@ -103,7 +96,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new UserCredentialsDto
+        var validUserRegistrationData = new UserCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"
@@ -111,10 +104,8 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         // Act
 
-        var response =
-            await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, userRegistrationDataWithRegisteredEmail);
-        var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
-        response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri, generatedTokens);
+        var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
+        var response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri, generatedTokens);
         // Assert
 
         Assert.False(response.IsSuccessStatusCode);
@@ -127,7 +118,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new UserCredentialsDto
+        var validUserRegistrationData = new UserCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"
@@ -135,9 +126,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         // Act
 
-        var response =
-            await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, userRegistrationDataWithRegisteredEmail);
-        var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
+        var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
 
         var invalidJwtToken = new JwtSecurityToken(
             _factory.UseConfiguration(x => x.GetValue<string>("JWT:ValidIssuer")),
@@ -150,7 +139,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var invalidTokenJson = new JwtSecurityTokenHandler().WriteToken(invalidJwtToken);
 
-        response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri,
+        var response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri,
             new AuthTokenPairDto(invalidTokenJson, generatedTokens.RefreshToken));
 
         // Assert
@@ -166,7 +155,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new UserCredentialsDto
+        var validUserRegistrationData = new UserCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"
@@ -174,9 +163,8 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         // Act
 
-        var response =
-            await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, userRegistrationDataWithRegisteredEmail);
-        var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
+        var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
+
 
         var invalidJwtToken = new JwtSecurityToken(
             "WrongIssuer",
@@ -189,7 +177,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var invalidTokenJson = new JwtSecurityTokenHandler().WriteToken(invalidJwtToken);
 
-        response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri,
+        var response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri,
             new AuthTokenPairDto(invalidTokenJson, generatedTokens.RefreshToken));
 
         // Assert
@@ -204,8 +192,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
         // Arrange
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
-
-        var userRegistrationDataWithRegisteredEmail = new UserCredentialsDto
+        var validUserRegistrationData = new UserCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"
@@ -213,16 +200,14 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         // Act
 
-        var response =
-            await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, userRegistrationDataWithRegisteredEmail);
-        var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
+        var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
 
 
         var invalidRefreshToken = new JwtSecurityToken(
             _factory.UseConfiguration(x => x.GetValue<string>("JWT:ValidIssuer")),
             expires: DateTime.UtcNow - TimeSpan.FromHours(1),
             signingCredentials: new SigningCredentials(new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes("123456791011121314151617181920")),
+                    "123456791011121314151617181920"u8.ToArray()),
                 SecurityAlgorithms.HmacSha256),
             claims: TestHelper.ValidateJwtToken(_factory, generatedTokens.RefreshToken).Claims
         );
@@ -231,8 +216,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         await Task.Delay(_jwtData.Value.TokenValidityInSeconds * 1000);
 
-
-        response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri,
+        var response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri,
             new AuthTokenPairDto(generatedTokens.SecurityToken, invalidTokenJson));
 
         // Assert
@@ -248,7 +232,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         var validEmail = $"test{TestHelper.UniqueNumber}@test.gmail.com";
 
-        var userRegistrationDataWithRegisteredEmail = new UserCredentialsDto
+        var validUserRegistrationData = new UserCredentialsDto
         {
             Email = validEmail,
             Password = "12345678"
@@ -256,10 +240,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         // Act
 
-        var response =
-            await _httpClient.PostAsJsonAsync(TestHelper.SignUpEndpointUri, userRegistrationDataWithRegisteredEmail);
-        var generatedTokens = await response.Content.ReadFromJsonAsync<AuthTokenPairDto>();
-
+        var generatedTokens = await TestHelper.RegisterUserAndGetTokens(_httpClient, validUserRegistrationData);
 
         var invalidRefreshToken = new JwtSecurityToken(
             "WrongIssuee",
@@ -274,8 +255,7 @@ public class TokenGenerationTests : IClassFixture<IntegrationTestingWebApplicati
 
         await Task.Delay(_jwtData.Value.TokenValidityInSeconds * 1000);
 
-
-        response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri,
+        var response = await _httpClient.PostAsJsonAsync(TestHelper.RefreshTokenEndpointUri,
             new AuthTokenPairDto(generatedTokens.SecurityToken, invalidTokenJson));
 
         // Assert
