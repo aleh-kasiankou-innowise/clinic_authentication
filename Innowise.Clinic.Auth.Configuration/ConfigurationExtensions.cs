@@ -31,7 +31,7 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Innowise.Clinic.Auth.Configuration;
 
-public static class ConfigurationManager
+public static class ConfigurationExtensions
 {
     public static IServiceCollection ConfigureSecurity(this IServiceCollection services,
         IConfiguration configuration)

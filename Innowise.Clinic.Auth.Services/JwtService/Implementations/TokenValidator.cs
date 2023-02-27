@@ -56,7 +56,6 @@ public class TokenValidator : ITokenValidator
     private async Task ValidateRefreshTokenAsync(string token)
     {
         var principal = ValidateTokenAndReturnPrinciple(token, true);
-
         var extractedTokenId = principal.FindFirstValue(JwtClaimTypes.TokenIdClaim);
         var associatedUserId = principal.FindFirstValue(JwtClaimTypes.UserIdClaim);
 
