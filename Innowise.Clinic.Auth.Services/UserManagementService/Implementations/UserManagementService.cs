@@ -8,7 +8,6 @@ using Innowise.Clinic.Auth.Persistence.Constants;
 using Innowise.Clinic.Auth.Services.Constants;
 using Innowise.Clinic.Auth.Services.Constants.Jwt;
 using Innowise.Clinic.Auth.Services.Extensions;
-using Innowise.Clinic.Auth.Services.JwtService.Data;
 using Innowise.Clinic.Auth.Services.JwtService.Interfaces;
 using Innowise.Clinic.Auth.Services.MailService.Interfaces;
 using Innowise.Clinic.Auth.Services.UserManagementService.Data;
@@ -29,11 +28,14 @@ public class UserManagementService : IUserManagementService
     private readonly ITokenRevoker _tokenRevoker;
     private readonly ITokenValidator _tokenValidator;
     private readonly UserManager<IdentityUser<Guid>> _userManager;
-    private readonly JwtValidationSettings _validationSettings;
 
-    public UserManagementService(UserManager<IdentityUser<Guid>> userManager, IEmailHandler emailHandler,
-        ITokenService tokenGenerator, SignInManager<IdentityUser<Guid>> signInManager, ITokenRevoker tokenRevoker,
-        ITokenValidator tokenValidator, IOptions<JwtValidationSettings> jwtValidationOptions,
+    public UserManagementService(
+        UserManager<IdentityUser<Guid>> userManager,
+        IEmailHandler emailHandler,
+        ITokenService tokenGenerator,
+        SignInManager<IdentityUser<Guid>> signInManager,
+        ITokenRevoker tokenRevoker,
+        ITokenValidator tokenValidator,
         IOptions<AuthenticationRequirementsSettings> authenticationRequirementsSettings)
     {
         _userManager = userManager;
@@ -42,7 +44,6 @@ public class UserManagementService : IUserManagementService
         _signInManager = signInManager;
         _tokenRevoker = tokenRevoker;
         _tokenValidator = tokenValidator;
-        _validationSettings = jwtValidationOptions.Value;
         _authenticationRequirementsSettings = authenticationRequirementsSettings.Value;
     }
 
@@ -72,7 +73,6 @@ public class UserManagementService : IUserManagementService
     public async Task<AuthTokenPairDto> SignInUserAsync(UserCredentialsDto patientCredentials)
     {
         var user = await _userManager.FindByEmailAsync(patientCredentials.Email) ?? throw new UserNotFoundException();
-
         if (_authenticationRequirementsSettings.ValidateUserEmailConfirmedOnLogin && !user.EmailConfirmed)
             throw new EmailNotConfirmedException(
                 "Please confirm your email. The confirmation link has been sent to your e-mail.");
@@ -136,7 +136,6 @@ public class UserManagementService : IUserManagementService
     private async Task<IdentityUser<Guid>> RegisterNewPatientAsync(UserCredentialsDto patientCredentials)
     {
         await EnsureUserNotRegisteredAsync(patientCredentials.Email);
-
         IdentityUser<Guid> user = new()
         {
             Email = patientCredentials.Email,
@@ -158,7 +157,6 @@ public class UserManagementService : IUserManagementService
         UserCreationRequestDto userCreationRequest)
     {
         await EnsureUserNotRegisteredAsync(userCredentials.Email);
-
         IdentityUser<Guid> user = new()
         {
             Email = userCredentials.Email,
@@ -168,7 +166,6 @@ public class UserManagementService : IUserManagementService
         };
 
         var signUpResult = await _userManager.CreateAsync(user, userCredentials.Password);
-
         if (signUpResult.Succeeded)
         {
             await _userManager.AddToRoleAsync(user, userCreationRequest.Role);

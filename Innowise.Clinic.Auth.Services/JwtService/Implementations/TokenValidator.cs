@@ -28,19 +28,19 @@ public class TokenValidator : ITokenValidator
     }
 
     public async Task<ClaimsPrincipal> ValidateTokenPairAndExtractPrincipal(AuthTokenPairDto authTokens,
-        bool tokenShouldBeExpired)
+        bool isTokenShouldBeExpired)
     {
-        var principal = ExtractPrincipalFromJwtToken(authTokens.SecurityToken, tokenShouldBeExpired);
+        var principal = ExtractPrincipalFromSecurityToken(authTokens.SecurityToken, isTokenShouldBeExpired);
         await ValidateRefreshTokenAsync(authTokens.RefreshToken);
         return principal;
     }
 
-    private ClaimsPrincipal ExtractPrincipalFromJwtToken(string token, bool tokenShouldBeExpired)
+    private ClaimsPrincipal ExtractPrincipalFromSecurityToken(string token, bool isTokenShouldBeExpired)
     {
         try
         {
             var securityToken = new JwtSecurityToken(token);
-            if (tokenShouldBeExpired && securityToken.ValidTo > DateTime.UtcNow)
+            if (isTokenShouldBeExpired && securityToken.ValidTo > DateTime.UtcNow)
                 throw new JwtTokenNotExpiredException();
 
             var principal = ValidateTokenAndReturnPrinciple(token, false);
@@ -92,8 +92,7 @@ public class TokenValidator : ITokenValidator
             ValidateLifetime = validateExpirationDate
         };
 
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var principal = tokenHandler.ValidateToken(token, jwtTokenValidationParameters,
+        var principal = new JwtSecurityTokenHandler().ValidateToken(token, jwtTokenValidationParameters,
             out _);
         return principal;
     }
