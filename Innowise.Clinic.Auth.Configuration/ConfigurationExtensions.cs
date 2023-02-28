@@ -10,6 +10,8 @@ using Innowise.Clinic.Auth.Services.JwtService.Interfaces;
 using Innowise.Clinic.Auth.Services.MailService.Data;
 using Innowise.Clinic.Auth.Services.MailService.Implementations;
 using Innowise.Clinic.Auth.Services.MailService.Interfaces;
+using Innowise.Clinic.Auth.Services.RabbitMqConsumer;
+using Innowise.Clinic.Auth.Services.RabbitMqConsumer.Options;
 using Innowise.Clinic.Auth.Services.UserCredentialsGenerationService.Implementations;
 using Innowise.Clinic.Auth.Services.UserCredentialsGenerationService.Interfaces;
 using Innowise.Clinic.Auth.Services.UserManagementService.Data;
@@ -53,6 +55,15 @@ public static class ConfigurationExtensions
         services.AddScoped<IEmailHandler, EmailHandler>();
         services.AddScoped<IUserManagementService, UserManagementService>();
         services.AddScoped<IUserCredentialsGenerationService, UserCredentialsGenerationService>();
+        return services;
+    }
+
+    public static IServiceCollection ConfigureCrossServiceCommunication(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.Configure<RabbitOptions>(configuration.GetSection("RabbitConfigurations"));
+        services.AddSingleton<RabbitMqConsumer>();
+        services.BuildServiceProvider().GetRequiredService(typeof(RabbitMqConsumer)); // TODO REMOVE OR IMPROVE
         return services;
     }
 

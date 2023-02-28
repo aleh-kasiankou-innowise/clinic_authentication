@@ -101,7 +101,7 @@ public class UserManagementService : IUserManagementService
         try
         {
             var principal = await _tokenValidator.ValidateTokenPairAndExtractPrincipal(userTokens);
-            return _tokenGenerator.GenerateJwtToken(principal);
+            return _tokenGenerator.GenerateSecurityToken(principal);
         }
         catch (SecurityTokenValidationException)
         {

@@ -13,6 +13,7 @@ builder.Services.AddDbContext<ClinicAuthDbContext>(
 builder.Services.ConfigureSecurity(builder.Configuration);
 builder.Services.AddConfigurationOptions(builder.Configuration);
 builder.Services.ConfigureUserManagementServices();
+builder.Services.ConfigureCrossServiceCommunication(builder.Configuration);
 
 var app = builder.Build();
 

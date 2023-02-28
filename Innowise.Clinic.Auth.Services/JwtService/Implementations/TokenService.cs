@@ -29,7 +29,7 @@ public class TokenService : ITokenService
         _securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Value.Key));
     }
 
-    public string GenerateJwtToken(ClaimsPrincipal principal)
+    public string GenerateSecurityToken(ClaimsPrincipal principal)
     {
         var expirationDate = DateTime.UtcNow.AddSeconds(_jwtOptions.Value.TokenValidityInSeconds);
         var token = IssueToken(expirationDate, principal.Claims);
@@ -52,7 +52,7 @@ public class TokenService : ITokenService
     public async Task<AuthTokenPairDto> GenerateJwtAndRefreshTokenAsync(IdentityUser<Guid> user)
     {
         var principal = await GetRegisteredUserPrincipalAsync(user);
-        var jwtToken = GenerateJwtToken(principal);
+        var jwtToken = GenerateSecurityToken(principal);
         var refreshToken = await GenerateRefreshTokenAsync(user.Id);
         var authTokens = new AuthTokenPairDto(jwtToken, refreshToken);
         return authTokens;
