@@ -12,6 +12,7 @@ public class ClinicAuthDbContext : IdentityDbContext<IdentityUser<Guid>, Identit
     }
 
     public DbSet<RefreshToken> RefreshTokens { get; init; }
+    public DbSet<AccountBlock> AccountBlocks { get; init; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -24,5 +25,10 @@ public class ClinicAuthDbContext : IdentityDbContext<IdentityUser<Guid>, Identit
             .HasOne<IdentityUser<Guid>>(x => x.User)
             .WithMany()
             .HasForeignKey(x => x.UserId);
+
+        modelBuilder.Entity<AccountBlock>()
+            .HasKey(x => x.AccountBlockId);
+        modelBuilder.Entity<AccountBlock>()
+            .HasOne(x => x.User).WithMany().HasForeignKey(ab => ab.UserId);
     }
 }

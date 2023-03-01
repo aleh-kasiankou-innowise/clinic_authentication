@@ -2,9 +2,11 @@
 using System.Security.Claims;
 using System.Text;
 using Innowise.Clinic.Auth.Dto;
+using Innowise.Clinic.Auth.Exceptions.AccountBlockingService;
 using Innowise.Clinic.Auth.Exceptions.CrossServiceCommunication;
 using Innowise.Clinic.Auth.Exceptions.UserManagement;
 using Innowise.Clinic.Auth.Persistence.Constants;
+using Innowise.Clinic.Auth.Services.AccountBlockingService.Interfaces;
 using Innowise.Clinic.Auth.Services.Constants;
 using Innowise.Clinic.Auth.Services.Constants.Jwt;
 using Innowise.Clinic.Auth.Services.Extensions;
@@ -21,6 +23,7 @@ namespace Innowise.Clinic.Auth.Services.UserManagementService.Implementations;
 
 public class UserManagementService : IUserManagementService
 {
+    private readonly IAccountBlockingService _accountBlockingService;
     private readonly AuthenticationRequirementsSettings _authenticationRequirementsSettings;
     private readonly IEmailHandler _emailHandler;
     private readonly SignInManager<IdentityUser<Guid>> _signInManager;
@@ -36,7 +39,8 @@ public class UserManagementService : IUserManagementService
         SignInManager<IdentityUser<Guid>> signInManager,
         ITokenRevoker tokenRevoker,
         ITokenValidator tokenValidator,
-        IOptions<AuthenticationRequirementsSettings> authenticationRequirementsSettings)
+        IOptions<AuthenticationRequirementsSettings> authenticationRequirementsSettings,
+        IAccountBlockingService accountBlockingService)
     {
         _userManager = userManager;
         _emailHandler = emailHandler;
@@ -44,6 +48,7 @@ public class UserManagementService : IUserManagementService
         _signInManager = signInManager;
         _tokenRevoker = tokenRevoker;
         _tokenValidator = tokenValidator;
+        _accountBlockingService = accountBlockingService;
         _authenticationRequirementsSettings = authenticationRequirementsSettings.Value;
     }
 
@@ -76,6 +81,11 @@ public class UserManagementService : IUserManagementService
         if (_authenticationRequirementsSettings.ValidateUserEmailConfirmedOnLogin && !user.EmailConfirmed)
             throw new EmailNotConfirmedException(
                 "Please confirm your email. The confirmation link has been sent to your e-mail.");
+
+        if (!await _accountBlockingService.IsAccountActive(user.Id))
+        {
+            throw new AccountBlockedException();
+        }
 
         var isSignInSucceeded =
             await _signInManager.UserManager.CheckPasswordAsync(user, patientCredentials.Password);

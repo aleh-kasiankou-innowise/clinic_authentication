@@ -1,5 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
+using Innowise.Clinic.Auth.Exceptions.AccountBlockingService;
+using Innowise.Clinic.Auth.Exceptions.UserManagement;
 using Innowise.Clinic.Auth.Exceptions.UserManagement.Base;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
@@ -16,6 +18,12 @@ public class AuthenticationExceptionHandlingMiddleware : IMiddleware
         try
         {
             await next(context);
+        }
+        catch (AccountBlockedException)
+        {
+            var publicException = new InvalidCredentialsProvidedException();
+            context.Response.StatusCode = publicException.StatusCode;
+            await WriteExceptionMessageToResponse(publicException.Message, context);
         }
         catch (AuthenticationException e)
         {

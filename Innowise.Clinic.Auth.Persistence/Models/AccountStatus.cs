@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace Innowise.Clinic.Auth.Persistence.Models;
 
-public class DoctorInfo
+public class AccountBlock
 {
-    public Guid WorkerInfoId { get; set; }
-    public Guid ProfileId { get; set; }
-    public bool IsProfileActive { get; set; }
+    public Guid AccountBlockId { get; set; }
+    public Guid UserId { get; set; }
+    public virtual IdentityUser<Guid> User { get; set; }
 }

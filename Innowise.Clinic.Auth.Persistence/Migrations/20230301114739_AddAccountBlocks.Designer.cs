@@ -4,6 +4,7 @@ using Innowise.Clinic.Auth.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Innowise.Clinic.Auth.Persistence.Migrations
 {
     [DbContext(typeof(ClinicAuthDbContext))]
-    partial class ClinicAuthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230301114739_AddAccountBlocks")]
+    partial class AddAccountBlocks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

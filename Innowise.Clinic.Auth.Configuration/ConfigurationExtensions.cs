@@ -4,6 +4,8 @@ using Innowise.Clinic.Auth.Configuration.Swagger;
 using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Middleware;
 using Innowise.Clinic.Auth.Persistence;
+using Innowise.Clinic.Auth.Services.AccountBlockingService.Implementations;
+using Innowise.Clinic.Auth.Services.AccountBlockingService.Interfaces;
 using Innowise.Clinic.Auth.Services.JwtService.Data;
 using Innowise.Clinic.Auth.Services.JwtService.Implementations;
 using Innowise.Clinic.Auth.Services.JwtService.Interfaces;
@@ -55,6 +57,7 @@ public static class ConfigurationExtensions
         services.AddScoped<IEmailHandler, EmailHandler>();
         services.AddScoped<IUserManagementService, UserManagementService>();
         services.AddScoped<IUserCredentialsGenerationService, UserCredentialsGenerationService>();
+        services.AddScoped<IAccountBlockingService, AccountBlockingService>();
         return services;
     }
 
