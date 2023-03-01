@@ -62,8 +62,7 @@ public static class ConfigurationExtensions
         IConfiguration configuration)
     {
         services.Configure<RabbitOptions>(configuration.GetSection("RabbitConfigurations"));
-        services.AddSingleton<RabbitMqConsumer>();
-        services.BuildServiceProvider().GetRequiredService(typeof(RabbitMqConsumer)); // TODO REMOVE OR IMPROVE
+        services.AddHostedService<RabbitMqConsumer>();
         return services;
     }
 
