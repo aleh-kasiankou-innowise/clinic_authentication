@@ -1,10 +1,14 @@
 using System.Text;
 using System.Text.Json;
+using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Dto.RabbitMq;
 using Innowise.Clinic.Auth.Exceptions.RabbitMq;
 using Innowise.Clinic.Auth.Exceptions.UserManagement;
 using Innowise.Clinic.Auth.Services.AccountBlockingService.Interfaces;
 using Innowise.Clinic.Auth.Services.RabbitMqConsumer.Options;
+using Innowise.Clinic.Auth.Services.UserCredentialsGenerationService.Interfaces;
+using Innowise.Clinic.Auth.Services.UserManagementService.Data;
+using Innowise.Clinic.Auth.Services.UserManagementService.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,12 +22,10 @@ public class RabbitMqConsumer : BackgroundService
 {
     private readonly IConnection _connection;
     private readonly IModel _doctorStatusUpdateChannel;
+    private readonly IModel _employeeHiringChannel;
     private readonly RabbitOptions _rabbitOptions;
     private readonly IModel _receptionistRemoveChannel;
     private readonly IServiceProvider _services;
-
-    private EventingBasicConsumer _doctorDeactivatedConsumer;
-    private EventingBasicConsumer _receptionistRemovedConsumer;
 
     public RabbitMqConsumer(IOptions<RabbitOptions> rabbitConfig, IServiceProvider services)
     {
@@ -36,6 +38,7 @@ public class RabbitMqConsumer : BackgroundService
         _connection = factory.CreateConnection();
         _doctorStatusUpdateChannel = _connection.CreateModel();
         _receptionistRemoveChannel = _connection.CreateModel();
+        _employeeHiringChannel = _connection.CreateModel();
     }
 
     public override void Dispose()
@@ -56,11 +59,11 @@ public class RabbitMqConsumer : BackgroundService
     {
         DeclareProfileAuthenticationExchange();
         var queue = CreateAndBindAnonymousQueue(_rabbitOptions.DoctorInactiveRoutingKey);
-        _doctorDeactivatedConsumer = new EventingBasicConsumer(_doctorStatusUpdateChannel);
-        _doctorDeactivatedConsumer.Received += HandleDoctorAccountStatusChange;
+        var doctorDeactivatedConsumer = new EventingBasicConsumer(_doctorStatusUpdateChannel);
+        doctorDeactivatedConsumer.Received += HandleDoctorAccountStatusChange;
         _doctorStatusUpdateChannel.BasicConsume(queue: queue,
             autoAck: true,
-            consumer: _doctorDeactivatedConsumer);
+            consumer: doctorDeactivatedConsumer);
     }
 
     private void HandleDoctorAccountStatusChange(object? model, BasicDeliverEventArgs ea)
@@ -87,11 +90,11 @@ public class RabbitMqConsumer : BackgroundService
     {
         DeclareProfileAuthenticationExchange();
         var queue = CreateAndBindAnonymousQueue(_rabbitOptions.ReceptionistRemovedRoutingKey);
-        _receptionistRemovedConsumer = new EventingBasicConsumer(_receptionistRemoveChannel);
-        _receptionistRemovedConsumer.Received += HandleReceptionistRemoval;
+        var receptionistRemovedConsumer = new EventingBasicConsumer(_receptionistRemoveChannel);
+        receptionistRemovedConsumer.Received += HandleReceptionistRemoval;
         _receptionistRemoveChannel.BasicConsume(queue: queue,
             autoAck: true,
-            consumer: _receptionistRemovedConsumer);
+            consumer: receptionistRemovedConsumer);
     }
 
     private void HandleReceptionistRemoval(object? model, BasicDeliverEventArgs ea)
@@ -105,6 +108,50 @@ public class RabbitMqConsumer : BackgroundService
             var accountToRemove = userManager.FindByIdAsync(accountId.ToString()).Result ??
                                   throw new UserNotFoundException();
             _ = userManager.DeleteAsync(accountToRemove).Result;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private void SubscribeToEmployeeHiringMessages()
+    {
+        DeclareProfileAuthenticationExchange();
+        var queue = CreateAndBindAnonymousQueue(_rabbitOptions.AccountGenerationRoutingKey);
+        var employeeHiredConsumer = new EventingBasicConsumer(_receptionistRemoveChannel);
+        employeeHiredConsumer.Received += HandleEmployeeHiring;
+        _receptionistRemoveChannel.BasicConsume(queue: queue,
+            autoAck: true,
+            consumer: employeeHiredConsumer);
+    }
+
+    private void HandleEmployeeHiring(object? model, BasicDeliverEventArgs ea)
+    {
+        try
+        {
+            var body = ea.Body.ToArray();
+            var message = Encoding.UTF8.GetString(body);
+            var accountGenerationRequest = JsonSerializer.Deserialize<AccountGenerationRequestDto>(message) ??
+                                           throw new DeserializationException(
+                                               "The object received is not of AccountGenerationRequestDto type.");
+
+            using var scope = _services.CreateScope();
+
+            var credentialsGenerationService =
+                scope.ServiceProvider.GetRequiredService<IUserCredentialsGenerationService>();
+            var userManagementService =
+                scope.ServiceProvider.GetRequiredService<IUserManagementService>();
+            var securityConfiguration =
+                scope.ServiceProvider.GetRequiredService<IOptions<AuthenticationRequirementsSettings>>();
+
+            var userCredentials =
+                credentialsGenerationService.GenerateCredentials(
+                    securityConfiguration.Value.MaximalPasswordLength,
+                    accountGenerationRequest.Email
+                );
+            userManagementService.RegisterConfirmedUserAsync(userCredentials, accountGenerationRequest).Wait();
         }
         catch (Exception e)
         {

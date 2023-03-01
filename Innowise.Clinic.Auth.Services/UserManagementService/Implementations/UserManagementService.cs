@@ -60,7 +60,7 @@ public class UserManagementService : IUserManagementService
     }
 
     public async Task RegisterConfirmedUserAsync(UserCredentialsDto userCredentials,
-        UserCreationRequestDto userCreationRequest)
+        AccountGenerationRequestDto userCreationRequest)
     {
         var user = await RegisterNewConfirmedUserAsync(userCredentials, userCreationRequest);
         await _emailHandler.SendEmailWithCredentialsAsync(userCredentials, userCreationRequest.Role);
@@ -164,7 +164,7 @@ public class UserManagementService : IUserManagementService
     }
 
     private async Task<IdentityUser<Guid>> RegisterNewConfirmedUserAsync(UserCredentialsDto userCredentials,
-        UserCreationRequestDto userCreationRequest)
+        AccountGenerationRequestDto userCreationRequest)
     {
         await EnsureUserNotRegisteredAsync(userCredentials.Email);
         IdentityUser<Guid> user = new()
