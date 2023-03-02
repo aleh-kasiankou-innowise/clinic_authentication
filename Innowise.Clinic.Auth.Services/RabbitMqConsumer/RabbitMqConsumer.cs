@@ -44,6 +44,7 @@ public class RabbitMqConsumer : BackgroundService
     public override void Dispose()
     {
         _doctorStatusUpdateChannel.Close();
+        _receptionistRemoveChannel.Close();
         _connection.Close();
         base.Dispose();
     }
@@ -53,6 +54,7 @@ public class RabbitMqConsumer : BackgroundService
         stoppingToken.ThrowIfCancellationRequested();
         SubscribeToReceptionistRemovalMessages();
         SubscribeToDoctorDeactivationMessages();
+        SubscribeToEmployeeHiringMessages();
     }
 
     private void SubscribeToDoctorDeactivationMessages()
@@ -120,7 +122,7 @@ public class RabbitMqConsumer : BackgroundService
     {
         DeclareProfileAuthenticationExchange();
         var queue = CreateAndBindAnonymousQueue(_rabbitOptions.AccountGenerationRoutingKey);
-        var employeeHiredConsumer = new EventingBasicConsumer(_receptionistRemoveChannel);
+        var employeeHiredConsumer = new EventingBasicConsumer(_employeeHiringChannel);
         employeeHiredConsumer.Received += HandleEmployeeHiring;
         _receptionistRemoveChannel.BasicConsume(queue: queue,
             autoAck: true,
