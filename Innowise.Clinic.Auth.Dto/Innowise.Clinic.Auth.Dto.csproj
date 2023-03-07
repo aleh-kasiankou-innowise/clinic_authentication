@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>Innowise.Clinic.Auth.Dto</AssemblyName>
+        <RootNamespace>Innowise.Clinic.Auth.Dto</RootNamespace>
+        <PackageId>Innowise.Clinic.Auth.Dto</PackageId>
+        <Authors>Innowise.Clinic.Auth.Dto</Authors>
+        <Company>Innowise.Clinic.Auth.Dto</Company>
+        <Product>Innowise.Clinic.Auth.Dto</Product>
+        <NoWarn>1591</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="Microsoft.Extensions.Identity.Stores">
+            <HintPath>..\..\..\..\..\.nuget\packages\microsoft.extensions.identity.stores\6.0.13\lib\net6.0\Microsoft.Extensions.Identity.Stores.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="6.0.13"/>
+    </ItemGroup>
+
+</Project>
