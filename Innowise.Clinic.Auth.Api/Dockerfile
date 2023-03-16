@@ -6,6 +6,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY . .
+COPY ./Innowise.Clinic.Auth.Api/NuGet.Config ./
 WORKDIR "/src/Innowise.Clinic.Auth.Api"
 RUN dotnet build "Innowise.Clinic.Auth.Api.csproj" -c Release -o /app/build
 

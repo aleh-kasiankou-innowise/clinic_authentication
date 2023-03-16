@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.Json;
-using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Dto.RabbitMq;
 using Innowise.Clinic.Auth.Exceptions.RabbitMq;
 using Innowise.Clinic.Auth.Exceptions.UserManagement;
@@ -9,6 +8,7 @@ using Innowise.Clinic.Auth.Services.RabbitMqConsumer.Options;
 using Innowise.Clinic.Auth.Services.UserCredentialsGenerationService.Interfaces;
 using Innowise.Clinic.Auth.Services.UserManagementService.Data;
 using Innowise.Clinic.Auth.Services.UserManagementService.Interfaces;
+using Innowise.Clinic.Shared.Dto;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -135,12 +135,11 @@ public class RabbitMqConsumer : BackgroundService
         {
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
-            var accountGenerationRequest = JsonSerializer.Deserialize<AccountGenerationRequestDto>(message) ??
+            var accountGenerationRequest = JsonSerializer.Deserialize<AccountGenerationDto>(message) ??
                                            throw new DeserializationException(
                                                "The object received is not of AccountGenerationRequestDto type.");
 
             using var scope = _services.CreateScope();
-
             var credentialsGenerationService =
                 scope.ServiceProvider.GetRequiredService<IUserCredentialsGenerationService>();
             var userManagementService =

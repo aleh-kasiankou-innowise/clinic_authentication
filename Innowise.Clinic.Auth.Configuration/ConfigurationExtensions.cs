@@ -12,6 +12,7 @@ using Innowise.Clinic.Auth.Services.JwtService.Interfaces;
 using Innowise.Clinic.Auth.Services.MailService.Data;
 using Innowise.Clinic.Auth.Services.MailService.Implementations;
 using Innowise.Clinic.Auth.Services.MailService.Interfaces;
+using Innowise.Clinic.Auth.Services.MassTransitService.Consumers;
 using Innowise.Clinic.Auth.Services.RabbitMqConsumer;
 using Innowise.Clinic.Auth.Services.RabbitMqConsumer.Options;
 using Innowise.Clinic.Auth.Services.UserCredentialsGenerationService.Implementations;
@@ -22,6 +23,7 @@ using Innowise.Clinic.Auth.Services.UserManagementService.Interfaces;
 using Innowise.Clinic.Auth.Validators.Custom;
 using Innowise.Clinic.Auth.Validators.Identity;
 using Innowise.Clinic.Auth.Validators.Interfaces;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -65,6 +67,22 @@ public static class ConfigurationExtensions
         IConfiguration configuration)
     {
         services.Configure<RabbitOptions>(configuration.GetSection("RabbitConfigurations"));
+        var rabbitMqConfig = configuration.GetSection("RabbitConfigurations");
+
+        services.AddMassTransit(x =>
+        {
+            x.AddConsumer<PatientProfileCreatedMessageConsumer>();
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host(rabbitMqConfig["HostName"], h =>
+                {
+                    h.Username(rabbitMqConfig["UserName"]);
+                    h.Password(rabbitMqConfig["Password"]);
+                });
+                cfg.ConfigureEndpoints(context);
+            });
+        });
+
         services.AddHostedService<RabbitMqConsumer>();
         return services;
     }

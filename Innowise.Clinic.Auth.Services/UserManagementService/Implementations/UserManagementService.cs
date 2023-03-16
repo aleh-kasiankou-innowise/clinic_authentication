@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Json;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Text;
 using Innowise.Clinic.Auth.Dto;
 using Innowise.Clinic.Auth.Exceptions.AccountBlockingService;
@@ -14,6 +13,10 @@ using Innowise.Clinic.Auth.Services.JwtService.Interfaces;
 using Innowise.Clinic.Auth.Services.MailService.Interfaces;
 using Innowise.Clinic.Auth.Services.UserManagementService.Data;
 using Innowise.Clinic.Auth.Services.UserManagementService.Interfaces;
+using Innowise.Clinic.Shared.Dto;
+using Innowise.Clinic.Shared.MassTransit.MessageTypes.Events;
+using Innowise.Clinic.Shared.MassTransit.MessageTypes.Requests;
+using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
@@ -31,6 +34,7 @@ public class UserManagementService : IUserManagementService
     private readonly ITokenRevoker _tokenRevoker;
     private readonly ITokenValidator _tokenValidator;
     private readonly UserManager<IdentityUser<Guid>> _userManager;
+    private readonly IRequestClient<UserProfileLinkingRequest> _userProfileLinkingClient;
 
     public UserManagementService(
         UserManager<IdentityUser<Guid>> userManager,
@@ -40,7 +44,8 @@ public class UserManagementService : IUserManagementService
         ITokenRevoker tokenRevoker,
         ITokenValidator tokenValidator,
         IOptions<AuthenticationRequirementsSettings> authenticationRequirementsSettings,
-        IAccountBlockingService accountBlockingService)
+        IAccountBlockingService accountBlockingService,
+        IRequestClient<UserProfileLinkingRequest> userProfileLinkingClient)
     {
         _userManager = userManager;
         _emailHandler = emailHandler;
@@ -49,6 +54,7 @@ public class UserManagementService : IUserManagementService
         _tokenRevoker = tokenRevoker;
         _tokenValidator = tokenValidator;
         _accountBlockingService = accountBlockingService;
+        _userProfileLinkingClient = userProfileLinkingClient;
         _authenticationRequirementsSettings = authenticationRequirementsSettings.Value;
     }
 
@@ -60,16 +66,16 @@ public class UserManagementService : IUserManagementService
     }
 
     public async Task RegisterConfirmedUserAsync(UserCredentialsDto userCredentials,
-        AccountGenerationRequestDto userCreationRequest)
+        AccountGenerationDto userCreationRequest)
     {
         var user = await RegisterNewConfirmedUserAsync(userCredentials, userCreationRequest);
         await _emailHandler.SendEmailWithCredentialsAsync(userCredentials, userCreationRequest.Role);
 
-        var accountLinkingDto =
-            new UserProfileLinkingDto(user.Id, userCreationRequest.EntityId);
         var profileLinkingResult =
-            await new HttpClient().PostAsJsonAsync(ServicesRoutes.AccountProfileLinkingUrl, accountLinkingDto);
-        if (!profileLinkingResult.IsSuccessStatusCode)
+            await _userProfileLinkingClient.GetResponse<UserProfileLinkingResponse>(new(
+                userCreationRequest.EntityId, user.Id));
+
+        if (!profileLinkingResult.Message.IsSuccessful)
         {
             throw new ProfileNotLinkedException();
         }
@@ -133,6 +139,16 @@ public class UserManagementService : IUserManagementService
         }
     }
 
+    public async Task LinkAccountToProfile(PatientCreatedProfileMessage profileLinkingDto)
+    {
+        var user = await _userManager.FindByIdAsync(profileLinkingDto.UserId.ToString()) ??
+                   throw new UserNotFoundException();
+        await _userManager.AddClaimAsync(user,
+            new Claim(JwtClaimTypes.CanInteractWithProfileClaim, profileLinkingDto.ProfileId.ToString()));
+
+        await _tokenRevoker.RevokeAllUserTokensAsync(profileLinkingDto.UserId);
+    }
+
     private async Task<string> PrepareEmailConfirmationLink(IdentityUser<Guid> user)
     {
         var emailConfirmationToken =
@@ -164,7 +180,7 @@ public class UserManagementService : IUserManagementService
     }
 
     private async Task<IdentityUser<Guid>> RegisterNewConfirmedUserAsync(UserCredentialsDto userCredentials,
-        AccountGenerationRequestDto userCreationRequest)
+        AccountGenerationDto userCreationRequest)
     {
         await EnsureUserNotRegisteredAsync(userCredentials.Email);
         IdentityUser<Guid> user = new()
