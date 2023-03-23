@@ -8,7 +8,6 @@ using DotNet.Testcontainers.Containers;
 using Innowise.Clinic.Auth.Api;
 using Innowise.Clinic.Auth.Persistence;
 using Innowise.Clinic.Auth.Services.JwtService.Data;
-using Innowise.Clinic.Auth.Services.MailService.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -90,11 +89,6 @@ public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Pro
             });
 
             services.Configure<JwtSettings>(x => { x.TokenValidityInSeconds = 5; });
-            services.Configure<SmtpSettings>(x =>
-            {
-                x.SmtpServerHost = ContainerHost;
-                x.SmtpServerPort = _smtpPort;
-            });
         });
     }
 

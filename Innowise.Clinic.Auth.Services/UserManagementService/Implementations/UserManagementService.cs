@@ -10,7 +10,6 @@ using Innowise.Clinic.Auth.Services.Constants;
 using Innowise.Clinic.Auth.Services.Constants.Jwt;
 using Innowise.Clinic.Auth.Services.Extensions;
 using Innowise.Clinic.Auth.Services.JwtService.Interfaces;
-using Innowise.Clinic.Auth.Services.MailService.Interfaces;
 using Innowise.Clinic.Auth.Services.UserManagementService.Data;
 using Innowise.Clinic.Auth.Services.UserManagementService.Interfaces;
 using Innowise.Clinic.Shared.Dto;
@@ -28,33 +27,32 @@ public class UserManagementService : IUserManagementService
 {
     private readonly IAccountBlockingService _accountBlockingService;
     private readonly AuthenticationRequirementsSettings _authenticationRequirementsSettings;
-    private readonly IEmailHandler _emailHandler;
     private readonly SignInManager<IdentityUser<Guid>> _signInManager;
     private readonly ITokenService _tokenGenerator;
     private readonly ITokenRevoker _tokenRevoker;
     private readonly ITokenValidator _tokenValidator;
     private readonly UserManager<IdentityUser<Guid>> _userManager;
     private readonly IRequestClient<UserProfileLinkingRequest> _userProfileLinkingClient;
+    private readonly IBus _bus;
 
     public UserManagementService(
         UserManager<IdentityUser<Guid>> userManager,
-        IEmailHandler emailHandler,
         ITokenService tokenGenerator,
         SignInManager<IdentityUser<Guid>> signInManager,
         ITokenRevoker tokenRevoker,
         ITokenValidator tokenValidator,
         IOptions<AuthenticationRequirementsSettings> authenticationRequirementsSettings,
         IAccountBlockingService accountBlockingService,
-        IRequestClient<UserProfileLinkingRequest> userProfileLinkingClient)
+        IRequestClient<UserProfileLinkingRequest> userProfileLinkingClient, IBus bus)
     {
         _userManager = userManager;
-        _emailHandler = emailHandler;
         _tokenGenerator = tokenGenerator;
         _signInManager = signInManager;
         _tokenRevoker = tokenRevoker;
         _tokenValidator = tokenValidator;
         _accountBlockingService = accountBlockingService;
         _userProfileLinkingClient = userProfileLinkingClient;
+        _bus = bus;
         _authenticationRequirementsSettings = authenticationRequirementsSettings.Value;
     }
 
@@ -62,15 +60,13 @@ public class UserManagementService : IUserManagementService
     {
         var registeredUser = await RegisterNewPatientAsync(patientCredentials);
         var emailConfirmationLink = await PrepareEmailConfirmationLink(registeredUser);
-        await _emailHandler.SendEmailConfirmationLinkAsync(registeredUser.Email, emailConfirmationLink);
+        await _bus.Publish<PatientAccountCreatedEvent>(new(patientCredentials.Email, emailConfirmationLink));
     }
 
     public async Task RegisterConfirmedUserAsync(UserCredentialsDto userCredentials,
         AccountGenerationDto userCreationRequest)
     {
         var user = await RegisterNewConfirmedUserAsync(userCredentials, userCreationRequest);
-        await _emailHandler.SendEmailWithCredentialsAsync(userCredentials, userCreationRequest.Role);
-
         var profileLinkingResult =
             await _userProfileLinkingClient.GetResponse<UserProfileLinkingResponse>(new(
                 userCreationRequest.EntityId, user.Id));
@@ -79,6 +75,8 @@ public class UserManagementService : IUserManagementService
         {
             throw new ProfileNotLinkedException();
         }
+        
+        await _bus.Publish<EmployeeAccountGeneratedEvent>(new (userCredentials.Email, userCredentials.Password, userCreationRequest.Role));
     }
 
     public async Task<AuthTokenPairDto> SignInUserAsync(UserCredentialsDto patientCredentials)

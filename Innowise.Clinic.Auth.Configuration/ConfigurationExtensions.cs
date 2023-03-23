@@ -9,9 +9,6 @@ using Innowise.Clinic.Auth.Services.AccountBlockingService.Interfaces;
 using Innowise.Clinic.Auth.Services.JwtService.Data;
 using Innowise.Clinic.Auth.Services.JwtService.Implementations;
 using Innowise.Clinic.Auth.Services.JwtService.Interfaces;
-using Innowise.Clinic.Auth.Services.MailService.Data;
-using Innowise.Clinic.Auth.Services.MailService.Implementations;
-using Innowise.Clinic.Auth.Services.MailService.Interfaces;
 using Innowise.Clinic.Auth.Services.MassTransitService.Consumers;
 using Innowise.Clinic.Auth.Services.RabbitMqConsumer;
 using Innowise.Clinic.Auth.Services.RabbitMqConsumer.Options;
@@ -56,7 +53,6 @@ public static class ConfigurationExtensions
 
     public static IServiceCollection ConfigureUserManagementServices(this IServiceCollection services)
     {
-        services.AddScoped<IEmailHandler, EmailHandler>();
         services.AddScoped<IUserManagementService, UserManagementService>();
         services.AddScoped<IUserCredentialsGenerationService, UserCredentialsGenerationService>();
         services.AddScoped<IAccountBlockingService, AccountBlockingService>();
@@ -127,12 +123,10 @@ public static class ConfigurationExtensions
     {
         var jwtConfiguration = configuration.GetSection("JWT");
         var jwtValidationConfiguration = configuration.GetSection("JwtValidationConfiguration");
-        var smtpConfiguration = configuration.GetSection("AuthSmtp");
         var authenticationRequirementsConfiguration = configuration.GetSection("AuthenticationRequirements");
 
         services.Configure<AuthenticationRequirementsSettings>(authenticationRequirementsConfiguration);
         services.Configure<JwtSettings>(jwtConfiguration);
-        services.Configure<SmtpSettings>(smtpConfiguration);
         services.Configure<JwtValidationSettings>(jwtValidationConfiguration);
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
         return services;

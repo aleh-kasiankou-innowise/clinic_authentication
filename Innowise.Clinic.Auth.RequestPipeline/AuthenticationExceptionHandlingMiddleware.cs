@@ -44,6 +44,7 @@ public class AuthenticationExceptionHandlingMiddleware : IMiddleware
         {
             context.Response.StatusCode = 500;
             await WriteExceptionMessageToResponse(DefaultUnhandledErrorMessage, context);
+            // TODO ADD LOGGING
         }
     }
 
