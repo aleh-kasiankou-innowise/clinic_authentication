@@ -2,6 +2,7 @@ using Innowise.Clinic.Auth.Configuration;
 using Innowise.Clinic.Auth.Middleware;
 using Innowise.Clinic.Auth.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ builder.Services.ConfigureSecurity(builder.Configuration);
 builder.Services.AddConfigurationOptions(builder.Configuration);
 builder.Services.ConfigureUserManagementServices();
 builder.Services.ConfigureCrossServiceCommunication(builder.Configuration);
+builder.ConfigureSerilog();
 
 var app = builder.Build();
 
@@ -26,7 +28,11 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+Log.Information("The Authentication service is starting");
 app.Run();
+Log.Information("The Authentication service is stopping");
+await Log.CloseAndFlushAsync();
 
 namespace Innowise.Clinic.Auth.Api
 {

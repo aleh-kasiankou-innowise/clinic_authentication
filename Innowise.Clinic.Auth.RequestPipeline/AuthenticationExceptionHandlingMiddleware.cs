@@ -5,6 +5,7 @@ using Innowise.Clinic.Auth.Exceptions.UserManagement;
 using Innowise.Clinic.Auth.Exceptions.UserManagement.Base;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
 namespace Innowise.Clinic.Auth.Middleware;
 
@@ -32,19 +33,21 @@ public class AuthenticationExceptionHandlingMiddleware : IMiddleware
         }
         catch (SecurityTokenValidationException e)
         {
+            Log.Warning(e, "Token validation exception");
             context.Response.StatusCode = 401;
             await WriteExceptionMessageToResponse(e.Message, context);
         }
         catch (ApplicationException e)
         {
+            Log.Error(e, "Handled exception");
             context.Response.StatusCode = 400;
             await WriteExceptionMessageToResponse(e.Message, context);
         }
         catch (Exception e)
         {
+            Log.Error(e, "Unhandled exception");
             context.Response.StatusCode = 500;
             await WriteExceptionMessageToResponse(DefaultUnhandledErrorMessage, context);
-            // TODO ADD LOGGING
         }
     }
 
